@@ -1,60 +1,10 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
-
-      /* Menú fijo arriba */
-      #menu {
-        position: absolute;
-        top: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        font-family: Arial, sans-serif;
-        width: 80%;
-        max-width: 400px;
-        display: none; /* Oculto al inicio */
-      }
-
-      #menu button {
-        background: #007BFF;
-        border: none;
-        color: white;
-        padding: 8px 12px;
-        margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      #menu button:hover {
-        background: #0056b3;
-      }
-    </style>
-
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
   <body>
-    <!-- Menú en pantalla -->
-    <div id="menu">
-      <h3 id="animal-title">Ballena</h3>
-      <p id="fact-text">Dato curioso 1: Las ballenas son los animales más grandes del planeta.</p>
-      <div>
-        <button id="prev-btn">Anterior</button>
-        <button id="next-btn">Siguiente</button>
-      </div>
-    </div>
-
-    <!-- Escena AR -->
     <a-scene
       mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
       color-space="sRGB"
@@ -64,7 +14,7 @@
     >
       <a-assets>
         <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
+        <a-asset-item id="OctopusO3" src="./Octopus.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -76,20 +26,37 @@
           position="0 0 0"
           scale="0.7 0.7 0.7"
         ></a-gltf-model>
+
+        <!-- Menú interactivo -->
+        <a-entity id="whale-menu" visible="false" position="0 0.8 0">
+          <a-plane color="#007BFF" width="1.5" height="0.5" opacity="0.8"></a-plane>
+          <a-text id="whale-text" value="Dato curioso 1: Las ballenas son los animales más grandes del planeta."
+                  align="center" color="#FFF" width="1.4" position="0 0 0.01"></a-text>
+          <a-box id="whale-prev" color="blue" depth="0.05" height="0.2" width="0.3" position="-0.7 -0.3 0.01"></a-box>
+          <a-box id="whale-next" color="blue" depth="0.05" height="0.2" width="0.3" position="0.7 -0.3 0.01"></a-box>
+        </a-entity>
       </a-entity>
 
       <!-- Pulpo -->
       <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
         <a-gltf-model
-          src="#OctupusO3"
+          src="#OctopusO3"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
         ></a-gltf-model>
+
+        <!-- Menú interactivo -->
+        <a-entity id="octopus-menu" visible="false" position="0 0.8 0">
+          <a-plane color="#007BFF" width="1.5" height="0.5" opacity="0.8"></a-plane>
+          <a-text id="octopus-text" value="Dato curioso 1: Los pulpos tienen tres corazones."
+                  align="center" color="#FFF" width="1.4" position="0 0 0.01"></a-text>
+          <a-box id="octopus-prev" color="blue" depth="0.05" height="0.2" width="0.3" position="-0.7 -0.3 0.01"></a-box>
+          <a-box id="octopus-next" color="blue" depth="0.05" height="0.2" width="0.3" position="0.7 -0.3 0.01"></a-box>
+        </a-entity>
       </a-entity>
     </a-scene>
 
     <script>
-      // Datos curiosos
       const whaleFacts = [
         "Dato curioso 1: Las ballenas son los animales más grandes del planeta.",
         "Dato curioso 2: Las ballenas jorobadas pueden cantar canciones complejas.",
@@ -104,66 +71,85 @@
 
       let whaleIndex = 0;
       let octopusIndex = 0;
-      let currentAnimal = null; // empieza sin animal activo
+      let whaleDetected = false;
+      let octopusDetected = false;
 
-      const menu = document.getElementById("menu");
-      const titleEl = document.getElementById("animal-title");
-      const factEl = document.getElementById("fact-text");
+      const whaleMenu = document.getElementById("whale-menu");
+      const octopusMenu = document.getElementById("octopus-menu");
 
-      // Botones
-      document.getElementById("prev-btn").addEventListener("click", () => {
-        if (currentAnimal === "whale") {
-          whaleIndex = (whaleIndex - 1 + whaleFacts.length) % whaleFacts.length;
-          factEl.textContent = whaleFacts[whaleIndex];
-        } else if (currentAnimal === "octopus") {
-          octopusIndex = (octopusIndex - 1 + octopusFacts.length) % octopusFacts.length;
-          factEl.textContent = octopusFacts[octopusIndex];
+      const whaleText = document.getElementById("whale-text");
+      const octopusText = document.getElementById("octopus-text");
+
+      // --- Función para actualizar visibilidad de menús ---
+      function updateMenus() {
+        if (whaleDetected && !octopusDetected) {
+          whaleMenu.setAttribute("visible", true);
+          octopusMenu.setAttribute("visible", false);
+        } else if (!whaleDetected && octopusDetected) {
+          whaleMenu.setAttribute("visible", false);
+          octopusMenu.setAttribute("visible", true);
+        } else {
+          // si ambos detectados o ninguno
+          whaleMenu.setAttribute("visible", false);
+          octopusMenu.setAttribute("visible", false);
         }
-      });
+      }
 
-      document.getElementById("next-btn").addEventListener("click", () => {
-        if (currentAnimal === "whale") {
-          whaleIndex = (whaleIndex + 1) % whaleFacts.length;
-          factEl.textContent = whaleFacts[whaleIndex];
-        } else if (currentAnimal === "octopus") {
-          octopusIndex = (octopusIndex + 1) % octopusFacts.length;
-          factEl.textContent = octopusFacts[octopusIndex];
-        }
-      });
-
-      // Targets
+      // --- Eventos de detección ---
       const whaleTarget = document.getElementById("target-whale");
       const octopusTarget = document.getElementById("target-octopus");
 
       whaleTarget.addEventListener("targetFound", () => {
-        currentAnimal = "whale";
+        whaleDetected = true;
         whaleIndex = 0;
-        titleEl.textContent = "Ballena";
-        factEl.textContent = whaleFacts[whaleIndex];
-        menu.style.display = "block"; // mostrar menú
+        whaleText.setAttribute("value", whaleFacts[whaleIndex]);
+        updateMenus();
       });
 
       whaleTarget.addEventListener("targetLost", () => {
-        if (currentAnimal === "whale") {
-          menu.style.display = "none"; // ocultar menú
-        }
+        whaleDetected = false;
+        updateMenus();
       });
 
       octopusTarget.addEventListener("targetFound", () => {
-        currentAnimal = "octopus";
+        octopusDetected = true;
         octopusIndex = 0;
-        titleEl.textContent = "Pulpo";
-        factEl.textContent = octopusFacts[octopusIndex];
-        menu.style.display = "block"; // mostrar menú
+        octopusText.setAttribute("value", octopusFacts[octopusIndex]);
+        updateMenus();
       });
 
       octopusTarget.addEventListener("targetLost", () => {
-        if (currentAnimal === "octopus") {
-          menu.style.display = "none"; // ocultar menú
-        }
+        octopusDetected = false;
+        updateMenus();
+      });
+
+      // --- Botones interactivos ---
+      const addClick = (entity, callback) => {
+        entity.addEventListener("click", callback);
+        // Para interacción con toque en dispositivos móviles
+        entity.addEventListener("touchstart", callback);
+      };
+
+      // Ballena
+      addClick(document.getElementById("whale-prev"), () => {
+        whaleIndex = (whaleIndex - 1 + whaleFacts.length) % whaleFacts.length;
+        whaleText.setAttribute("value", whaleFacts[whaleIndex]);
+      });
+      addClick(document.getElementById("whale-next"), () => {
+        whaleIndex = (whaleIndex + 1) % whaleFacts.length;
+        whaleText.setAttribute("value", whaleFacts[whaleIndex]);
+      });
+
+      // Pulpo
+      addClick(document.getElementById("octopus-prev"), () => {
+        octopusIndex = (octopusIndex - 1 + octopusFacts.length) % octopusFacts.length;
+        octopusText.setAttribute("value", octopusFacts[octopusIndex]);
+      });
+      addClick(document.getElementById("octopus-next"), () => {
+        octopusIndex = (octopusIndex + 1) % octopusFacts.length;
+        octopusText.setAttribute("value", octopusFacts[octopusIndex]);
       });
     </script>
   </body>
 </html>
-
 
