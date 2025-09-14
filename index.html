@@ -6,44 +6,94 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" 
+             color-space="sRGB" 
+             renderer="colorManagement: true, physicallyCorrectLights" 
+             vr-mode-ui="enabled: false" 
+             device-orientation-permission-ui="enabled: false">
+
       <a-assets>
         <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
         <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
       </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <!-- Cámara preparada para clics -->
+      <a-camera 
+        position="0 0 0" 
+        look-controls="enabled: false" 
+        cursor="fuse: false; rayOrigin: mouse;" 
+        raycaster="near: 0.1; far: 1000; objects: .clickable">
+      </a-camera>
 
-      
-      <a-entity mindar-image-target="targetIndex: 0">
-        <a-gltf-model 
+      <!-- 🐳 Ballena (targetIndex 0) -->
+      <a-entity id="whale-target" mindar-image-target="targetIndex: 0">
+        <a-gltf-model id="whaleModel"
+          class="clickable"
           src="#WhaleO3"
           position="0 0 0"
           scale="0.7 0.7 0.7"
           rotation="0 0 0"
+          visible="false"
           animation-mixer
-          
           animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
           animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear">
         </a-gltf-model>
       </a-entity>
 
-  
-      <a-entity mindar-image-target="targetIndex: 1">
-        <a-gltf-model 
+      <!-- 🐙 Pulpo (targetIndex 1) -->
+      <a-entity id="octopus-target" mindar-image-target="targetIndex: 1">
+        <a-gltf-model id="octopusModel"
+          class="clickable"
           src="#OctupusO3"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
           rotation="0 0 0"
+          visible="false"
           animation-mixer
-
           animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
           animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
         </a-gltf-model>
       </a-entity>
     </a-scene>
+
+    <script>
+      const whaleTarget = document.querySelector("#whale-target");
+      const whaleModel = document.querySelector("#whaleModel");
+      const octopusTarget = document.querySelector("#octopus-target");
+      const octopusModel = document.querySelector("#octopusModel");
+
+      // 🐳 Eventos para la ballena
+      whaleTarget.addEventListener("targetFound", () => {
+        console.log("Ballena detectada");
+        whaleModel.setAttribute("visible", "true");
+      });
+      whaleTarget.addEventListener("targetLost", () => {
+        console.log("Ballena perdida");
+        whaleModel.setAttribute("visible", "false");
+      });
+
+      // 🐙 Eventos para el pulpo
+      octopusTarget.addEventListener("targetFound", () => {
+        console.log("Pulpo detectado");
+        octopusModel.setAttribute("visible", "true");
+      });
+      octopusTarget.addEventListener("targetLost", () => {
+        console.log("Pulpo perdido");
+        octopusModel.setAttribute("visible", "false");
+      });
+
+      // 🖱️ Interacción con clic (cambia de tamaño)
+      whaleModel.addEventListener("click", () => {
+        whaleModel.setAttribute("scale", "1 1 1");
+        setTimeout(() => whaleModel.setAttribute("scale", "0.7 0.7 0.7"), 1000);
+      });
+
+      octopusModel.addEventListener("click", () => {
+        octopusModel.setAttribute("scale", "0.1 0.1 0.1");
+        setTimeout(() => octopusModel.setAttribute("scale", "0.05 0.05 0.05"), 1000);
+      });
+    </script>
   </body>
 </html>
-
 
 
