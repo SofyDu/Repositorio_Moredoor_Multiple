@@ -5,28 +5,43 @@
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; }
-      #menu, #message {
+      body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+      #menu {
         position: absolute;
-        top: 10px;
+        bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,50,0.8);
+        background: rgba(0, 0, 80, 0.8);
         color: white;
-        padding: 10px;
-        border-radius: 10px;
+        padding: 15px;
+        border-radius: 12px;
         text-align: center;
-        font-family: Arial, sans-serif;
         display: none;
+      }
+      #menu button {
+        margin: 5px;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
       }
       #fact-box {
         margin-top: 10px;
         font-size: 14px;
       }
       #message {
-        background: rgba(0,0,0,0.7);
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
         font-size: 16px;
-        display: block; /* mensaje visible por defecto */
+        display: block; /* visible por defecto */
       }
     </style>
   </head>
@@ -108,7 +123,6 @@
     </script>
   </body>
 </html>
-
 
 
 
