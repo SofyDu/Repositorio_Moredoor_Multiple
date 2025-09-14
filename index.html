@@ -19,6 +19,7 @@
         text-align: center;
         width: 80%;
         max-width: 400px;
+        display: none; /* oculto por defecto */
       }
 
       #menu button {
@@ -45,6 +46,7 @@
   <body>
     <!-- Menú flotante -->
     <div id="menu">
+      <div id="fact-box">Selecciona un animal para ver curiosidades</div>
       <div>
         <button id="btnPrev">⬅️ Anterior</button>
         <button id="btnNext">➡️ Siguiente</button>
@@ -95,6 +97,7 @@
 
     <script>
       const factBox = document.querySelector("#fact-box");
+      const menu = document.querySelector("#menu");
 
       const facts = {
         whale: [
@@ -112,21 +115,16 @@
       let currentAnimal = null;
       let factIndex = 0;
 
-      // Flags de detección
       let whaleDetected = false;
       let octopusDetected = false;
 
-      const whaleModel = document.getElementById("whale-model");
-      const octopusModel = document.getElementById("octopus-model");
-
-      const menu = document.getElementById("menu");
-
       function showFact() {
-        factBox.innerText = facts[currentAnimal][factIndex];
+        if (currentAnimal) {
+          factBox.innerText = facts[currentAnimal][factIndex];
+        }
       }
 
       function updateMenuVisibility() {
-        // Mostrar menú solo si exactamente un target está detectado
         if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
           menu.style.display = "block";
         } else {
@@ -134,12 +132,14 @@
         }
       }
 
-      // --- Eventos de detección ---
+      // Eventos detección ballena
       document.getElementById("target-whale").addEventListener("targetFound", () => {
         whaleDetected = true;
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
+        if (!octopusDetected) {
+          currentAnimal = "whale";
+          factIndex = 0;
+          showFact();
+        }
         updateMenuVisibility();
       });
       document.getElementById("target-whale").addEventListener("targetLost", () => {
@@ -147,11 +147,14 @@
         updateMenuVisibility();
       });
 
+      // Eventos detección pulpo
       document.getElementById("target-octopus").addEventListener("targetFound", () => {
         octopusDetected = true;
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
+        if (!whaleDetected) {
+          currentAnimal = "octopus";
+          factIndex = 0;
+          showFact();
+        }
         updateMenuVisibility();
       });
       document.getElementById("target-octopus").addEventListener("targetLost", () => {
@@ -159,34 +162,22 @@
         updateMenuVisibility();
       });
 
-      // --- Botones para cambiar animal ---
-      document.querySelector("#btnWhale").addEventListener("click", () => {
-        whaleModel.setAttribute("visible", true);
-        octopusModel.setAttribute("visible", false);
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
-      });
-
-      document.querySelector("#btnOctopus").addEventListener("click", () => {
-        whaleModel.setAttribute("visible", false);
-        octopusModel.setAttribute("visible", true);
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
-      });
-
-      // --- Botones para navegar curiosidades ---
+      // Botones curiosidades
       document.querySelector("#btnNext").addEventListener("click", () => {
-        factIndex = (factIndex + 1) % facts[currentAnimal].length;
-        showFact();
+        if (currentAnimal) {
+          factIndex = (factIndex + 1) % facts[currentAnimal].length;
+          showFact();
+        }
       });
 
       document.querySelector("#btnPrev").addEventListener("click", () => {
-        factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
-        showFact();
+        if (currentAnimal) {
+          factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
+          showFact();
+        }
       });
     </script>
   </body>
 </html>
+
 
