@@ -2,98 +2,69 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" 
-             color-space="sRGB" 
-             renderer="colorManagement: true, physicallyCorrectLights" 
-             vr-mode-ui="enabled: false" 
-             device-orientation-permission-ui="enabled: false">
-
+    <a-scene
+      mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
       <a-assets>
-        <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
+        <!-- Modelos -->
+        <a-asset-item id="WhaleModel" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="OctopusModel" src="./Octopus.glb"></a-asset-item>
       </a-assets>
 
-      <!-- Cámara preparada para clics -->
-      <a-camera 
-        position="0 0 0" 
-        look-controls="enabled: false" 
-        cursor="fuse: false; rayOrigin: mouse;" 
-        raycaster="near: 0.1; far: 1000; objects: .clickable">
-      </a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- 🐳 Ballena (targetIndex 0) -->
-      <a-entity id="whale-target" mindar-image-target="targetIndex: 0">
-        <a-gltf-model id="whaleModel"
-          class="clickable"
-          src="#WhaleO3"
+      <!-- Target 0 -->
+      <a-entity id="target-0" mindar-image-target="targetIndex: 0">
+        <a-gltf-model
+          id="model-interactive"
+          src="#WhaleModel"
+          rotation="0 0 0"
           position="0 0 0"
           scale="0.7 0.7 0.7"
-          rotation="0 0 0"
-          visible="false"
-          animation-mixer
           animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear">
-        </a-gltf-model>
-      </a-entity>
-
-      <!-- 🐙 Pulpo (targetIndex 1) -->
-      <a-entity id="octopus-target" mindar-image-target="targetIndex: 1">
-        <a-gltf-model id="octopusModel"
-          class="clickable"
-          src="#OctupusO3"
-          position="0 -0.25 0"
-          scale="0.05 0.05 0.05"
-          rotation="0 0 0"
-          visible="false"
-          animation-mixer
-          animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
+          animation__spin="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear"
+        >
         </a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      const whaleTarget = document.querySelector("#whale-target");
-      const whaleModel = document.querySelector("#whaleModel");
-      const octopusTarget = document.querySelector("#octopus-target");
-      const octopusModel = document.querySelector("#octopusModel");
+      const model = document.querySelector("#model-interactive");
+      const target = document.querySelector("#target-0");
 
-      // 🐳 Eventos para la ballena
-      whaleTarget.addEventListener("targetFound", () => {
-        console.log("Ballena detectada");
-        whaleModel.setAttribute("visible", "true");
-      });
-      whaleTarget.addEventListener("targetLost", () => {
-        console.log("Ballena perdida");
-        whaleModel.setAttribute("visible", "false");
-      });
+      let showingWhale = true;
 
-      // 🐙 Eventos para el pulpo
-      octopusTarget.addEventListener("targetFound", () => {
-        console.log("Pulpo detectado");
-        octopusModel.setAttribute("visible", "true");
-      });
-      octopusTarget.addEventListener("targetLost", () => {
-        console.log("Pulpo perdido");
-        octopusModel.setAttribute("visible", "false");
+      // --- 1) Cambiar modelo al hacer clic ---
+      model.addEventListener("click", () => {
+        if (showingWhale) {
+          model.setAttribute("src", "#OctopusModel");
+          model.setAttribute("scale", "0.05 0.05 0.05");
+          model.setAttribute("position", "0 -0.25 0");
+        } else {
+          model.setAttribute("src", "#WhaleModel");
+          model.setAttribute("scale", "0.7 0.7 0.7");
+          model.setAttribute("position", "0 0 0");
+        }
+        showingWhale = !showingWhale;
       });
 
-      // 🖱️ Interacción con clic (cambia de tamaño)
-      whaleModel.addEventListener("click", () => {
-        whaleModel.setAttribute("scale", "1 1 1");
-        setTimeout(() => whaleModel.setAttribute("scale", "0.7 0.7 0.7"), 1000);
+      // --- 2) Eventos de MindAR (targetFound / targetLost) ---
+      target.addEventListener("targetFound", () => {
+        console.log("Target encontrado");
+        alert("Se detectó el marcador, aparece el modelo ");
       });
 
-      octopusModel.addEventListener("click", () => {
-        octopusModel.setAttribute("scale", "0.1 0.1 0.1");
-        setTimeout(() => octopusModel.setAttribute("scale", "0.05 0.05 0.05"), 1000);
+      target.addEventListener("targetLost", () => {
+        console.log("Target perdido");
+        alert("El marcador ya no está visible");
       });
     </script>
   </body>
 </html>
-
-
