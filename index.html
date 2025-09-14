@@ -4,49 +4,48 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; }
-      #scanMessage {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 12px 20px;
-        background: rgba(0, 0, 0, 0.7);
-        color: white;
-        font-family: Arial, sans-serif;
-        border-radius: 10px;
-        text-align: center;
-        z-index: 9999;
-      }
-      #factMenu {
+      body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+      #fact-menu {
         position: absolute;
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 100, 0.7);
+        background: rgba(0,0,0,0.6);
         color: white;
-        padding: 15px;
-        border-radius: 12px;
+        padding: 12px;
+        border-radius: 10px;
         display: none;
-        font-family: Arial, sans-serif;
-        max-width: 80%;
+        max-width: 90%;
         text-align: center;
+      }
+      #scan-guide {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
-    <!-- Mensaje inicial -->
-    <div id="scanMessage">🔎 Escanea la tarjeta de la Ballena 🐳 o del Pulpo 🐙</div>
+    <!-- Mensaje de guía -->
+    <div id="scan-guide">📷 Escanea un marcador para comenzar</div>
 
     <!-- Menú de datos curiosos -->
-    <div id="factMenu">Selecciona un animal para ver curiosidades</div>
+    <div id="fact-menu">Selecciona un marcador para ver datos curiosos</div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" 
-             color-space="sRGB" 
-             renderer="colorManagement: true, physicallyCorrectLights" 
-             vr-mode-ui="enabled: false" 
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
+             color-space="sRGB"
+             renderer="colorManagement: true, physicallyCorrectLights"
+             vr-mode-ui="enabled: false"
              device-orientation-permission-ui="enabled: false">
-
+      
       <a-assets>
         <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
         <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
@@ -54,72 +53,56 @@
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- Target Ballena -->
-      <a-entity id="whaleTarget" mindar-image-target="targetIndex: 0">
+      <a-entity id="whale-target" mindar-image-target="targetIndex: 0">
         <a-gltf-model src="#WhaleO3" scale="0.7 0.7 0.7" position="0 0 0"></a-gltf-model>
       </a-entity>
 
-      <!-- Target Pulpo -->
-      <a-entity id="octopusTarget" mindar-image-target="targetIndex: 1">
+      <a-entity id="octopus-target" mindar-image-target="targetIndex: 1">
         <a-gltf-model src="#OctupusO3" scale="0.05 0.05 0.05" position="0 -0.25 0"></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      const scanMessage = document.getElementById("scanMessage");
-      const factMenu = document.getElementById("factMenu");
+      const scanGuide = document.getElementById("scan-guide");
+      const factMenu = document.getElementById("fact-menu");
 
-      const whaleTarget = document.querySelector("#whaleTarget");
-      const octopusTarget = document.querySelector("#octopusTarget");
-
-      const whaleFacts = [
-        "🐳 Las ballenas son los animales más grandes del planeta.",
-        "🐳 Pueden comunicarse a cientos de kilómetros bajo el agua.",
-        "🐳 Algunas ballenas viven más de 90 años."
-      ];
-
-      const octopusFacts = [
-        "🐙 Los pulpos tienen tres corazones.",
-        "🐙 Son maestros del camuflaje.",
-        "🐙 Pueden abrir frascos desde dentro."
-      ];
+      const whaleTarget = document.getElementById("whale-target");
+      const octopusTarget = document.getElementById("octopus-target");
 
       let whaleVisible = false;
       let octopusVisible = false;
 
-      function updateUI() {
+      const whaleFacts = [
+        "Las ballenas azules son los animales más grandes que han existido.",
+        "Su corazón puede pesar tanto como un coche pequeño.",
+        "Se comunican con cantos que viajan kilómetros bajo el agua."
+      ];
+      const octopusFacts = [
+        "Los pulpos tienen tres corazones y sangre azul.",
+        "Son maestros del camuflaje gracias a sus cromatóforos.",
+        "Pueden abrir frascos y resolver problemas complejos."
+      ];
+
+      function updateMenu() {
         if (whaleVisible && !octopusVisible) {
-          scanMessage.style.display = "none";
           factMenu.style.display = "block";
-          factMenu.textContent = whaleFacts[Math.floor(Math.random() * whaleFacts.length)];
+          factMenu.innerHTML = "🐳 Curiosidades de la Ballena:<br>" + whaleFacts.join("<br>");
+          scanGuide.style.display = "none";
         } else if (octopusVisible && !whaleVisible) {
-          scanMessage.style.display = "none";
           factMenu.style.display = "block";
-          factMenu.textContent = octopusFacts[Math.floor(Math.random() * octopusFacts.length)];
+          factMenu.innerHTML = "🐙 Curiosidades del Pulpo:<br>" + octopusFacts.join("<br>");
+          scanGuide.style.display = "none";
         } else {
-          // Si no hay targets o ambos están visibles
           factMenu.style.display = "none";
-          scanMessage.style.display = "block";
+          scanGuide.style.display = "block";
         }
       }
 
-      whaleTarget.addEventListener("targetFound", () => {
-        whaleVisible = true;
-        updateUI();
-      });
-      whaleTarget.addEventListener("targetLost", () => {
-        whaleVisible = false;
-        updateUI();
-      });
+      whaleTarget.addEventListener("targetFound", () => { whaleVisible = true; updateMenu(); });
+      whaleTarget.addEventListener("targetLost", () => { whaleVisible = false; updateMenu(); });
 
-      octopusTarget.addEventListener("targetFound", () => {
-        octopusVisible = true;
-        updateUI();
-      });
-      octopusTarget.addEventListener("targetLost", () => {
-        octopusVisible = false;
-        updateUI();
-      });
+      octopusTarget.addEventListener("targetFound", () => { octopusVisible = true; updateMenu(); });
+      octopusTarget.addEventListener("targetLost", () => { octopusVisible = false; updateMenu(); });
     </script>
   </body>
 </html>
