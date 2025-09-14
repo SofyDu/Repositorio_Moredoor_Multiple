@@ -2,50 +2,47 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
-      #fact-menu {
+      body { margin: 0; overflow: hidden; }
+      #menu, #message {
         position: absolute;
-        bottom: 20px;
+        top: 10px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.6);
+        background: rgba(0,0,50,0.8);
         color: white;
-        padding: 12px;
+        padding: 10px;
         border-radius: 10px;
-        display: none;
-        max-width: 90%;
         text-align: center;
+        font-family: Arial, sans-serif;
+        display: none;
       }
-      #scan-guide {
-        position: absolute;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 123, 255, 0.9);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
+      #fact-box {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+      #message {
+        background: rgba(0,0,0,0.7);
         font-size: 16px;
-        font-weight: bold;
-        z-index: 10;
+        display: block; /* mensaje visible por defecto */
       }
     </style>
   </head>
   <body>
-    <!-- Mensaje de guía -->
-    <div id="scan-guide">📷 Escanea un marcador para comenzar</div>
+    <div id="menu">
+      <div id="fact-box">Selecciona un animal para ver curiosidades</div>
+    </div>
 
-    <!-- Menú de datos curiosos -->
-    <div id="fact-menu">Selecciona un marcador para ver datos curiosos</div>
+    <div id="message">📷 Apunta tu cámara a un marcador para comenzar</div>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
-             color-space="sRGB"
-             renderer="colorManagement: true, physicallyCorrectLights"
-             vr-mode-ui="enabled: false"
-             device-orientation-permission-ui="enabled: false">
-      
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false">
+
       <a-assets>
         <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
         <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
@@ -53,56 +50,61 @@
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <a-entity id="whale-target" mindar-image-target="targetIndex: 0">
-        <a-gltf-model src="#WhaleO3" scale="0.7 0.7 0.7" position="0 0 0"></a-gltf-model>
+      <!-- Ballena -->
+      <a-entity mindar-image-target="targetIndex: 0" id="whaleTarget">
+        <a-gltf-model src="#WhaleO3" scale="0.7 0.7 0.7" position="0 0 0" rotation="0 0 0" animation-mixer></a-gltf-model>
       </a-entity>
 
-      <a-entity id="octopus-target" mindar-image-target="targetIndex: 1">
-        <a-gltf-model src="#OctupusO3" scale="0.05 0.05 0.05" position="0 -0.25 0"></a-gltf-model>
+      <!-- Pulpo -->
+      <a-entity mindar-image-target="targetIndex: 1" id="octopusTarget">
+        <a-gltf-model src="#OctupusO3" scale="0.05 0.05 0.05" position="0 -0.25 0" rotation="0 0 0" animation-mixer></a-gltf-model>
       </a-entity>
     </a-scene>
 
     <script>
-      const scanGuide = document.getElementById("scan-guide");
-      const factMenu = document.getElementById("fact-menu");
-
-      const whaleTarget = document.getElementById("whale-target");
-      const octopusTarget = document.getElementById("octopus-target");
+      const whaleTarget = document.querySelector("#whaleTarget");
+      const octopusTarget = document.querySelector("#octopusTarget");
+      const menu = document.querySelector("#menu");
+      const factBox = document.querySelector("#fact-box");
+      const message = document.querySelector("#message");
 
       let whaleVisible = false;
       let octopusVisible = false;
 
       const whaleFacts = [
-        "Las ballenas azules son los animales más grandes que han existido.",
-        "Su corazón puede pesar tanto como un coche pequeño.",
-        "Se comunican con cantos que viajan kilómetros bajo el agua."
-      ];
-      const octopusFacts = [
-        "Los pulpos tienen tres corazones y sangre azul.",
-        "Son maestros del camuflaje gracias a sus cromatóforos.",
-        "Pueden abrir frascos y resolver problemas complejos."
+        "Las ballenas son los animales más grandes del planeta 🌍",
+        "Pueden comunicarse con cantos que viajan kilómetros 🎶",
+        "Algunas ballenas viven más de 90 años ⏳"
       ];
 
-      function updateMenu() {
+      const octopusFacts = [
+        "Los pulpos tienen tres corazones ❤️❤️❤️",
+        "Son maestros del camuflaje 🐙✨",
+        "Pueden abrir frascos y resolver problemas 🔓"
+      ];
+
+      function updateUI() {
         if (whaleVisible && !octopusVisible) {
-          factMenu.style.display = "block";
-          factMenu.innerHTML = "🐳 Curiosidades de la Ballena:<br>" + whaleFacts.join("<br>");
-          scanGuide.style.display = "none";
+          factBox.textContent = whaleFacts[Math.floor(Math.random() * whaleFacts.length)];
+          menu.style.display = "block";
+          message.style.display = "none";
         } else if (octopusVisible && !whaleVisible) {
-          factMenu.style.display = "block";
-          factMenu.innerHTML = "🐙 Curiosidades del Pulpo:<br>" + octopusFacts.join("<br>");
-          scanGuide.style.display = "none";
+          factBox.textContent = octopusFacts[Math.floor(Math.random() * octopusFacts.length)];
+          menu.style.display = "block";
+          message.style.display = "none";
+        } else if (whaleVisible && octopusVisible) {
+          menu.style.display = "none";
+          message.style.display = "none";
         } else {
-          factMenu.style.display = "none";
-          scanGuide.style.display = "block";
+          menu.style.display = "none";
+          message.style.display = "block";
         }
       }
 
-      whaleTarget.addEventListener("targetFound", () => { whaleVisible = true; updateMenu(); });
-      whaleTarget.addEventListener("targetLost", () => { whaleVisible = false; updateMenu(); });
-
-      octopusTarget.addEventListener("targetFound", () => { octopusVisible = true; updateMenu(); });
-      octopusTarget.addEventListener("targetLost", () => { octopusVisible = false; updateMenu(); });
+      whaleTarget.addEventListener("targetFound", () => { whaleVisible = true; updateUI(); });
+      whaleTarget.addEventListener("targetLost", () => { whaleVisible = false; updateUI(); });
+      octopusTarget.addEventListener("targetFound", () => { octopusVisible = true; updateUI(); });
+      octopusTarget.addEventListener("targetLost", () => { octopusVisible = false; updateUI(); });
     </script>
   </body>
 </html>
