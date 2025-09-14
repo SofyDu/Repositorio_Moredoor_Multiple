@@ -14,7 +14,7 @@
         top: 10px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.7);
         color: white;
         padding: 15px;
         border-radius: 10px;
@@ -22,6 +22,7 @@
         font-family: Arial, sans-serif;
         width: 80%;
         max-width: 400px;
+        display: none; /* Oculto al inicio */
       }
 
       #menu button {
@@ -69,9 +70,8 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <!-- Ballena -->
-      <a-entity mindar-image-target="targetIndex: 0">
+      <a-entity id="target-whale" mindar-image-target="targetIndex: 0">
         <a-gltf-model
-          id="whale-model"
           src="#WhaleO3"
           position="0 0 0"
           scale="0.7 0.7 0.7"
@@ -79,9 +79,8 @@
       </a-entity>
 
       <!-- Pulpo -->
-      <a-entity mindar-image-target="targetIndex: 1">
+      <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
         <a-gltf-model
-          id="octopus-model"
           src="#OctupusO3"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
@@ -105,8 +104,9 @@
 
       let whaleIndex = 0;
       let octopusIndex = 0;
-      let currentAnimal = "whale"; // por defecto
+      let currentAnimal = null; // empieza sin animal activo
 
+      const menu = document.getElementById("menu");
       const titleEl = document.getElementById("animal-title");
       const factEl = document.getElementById("fact-text");
 
@@ -115,7 +115,7 @@
         if (currentAnimal === "whale") {
           whaleIndex = (whaleIndex - 1 + whaleFacts.length) % whaleFacts.length;
           factEl.textContent = whaleFacts[whaleIndex];
-        } else {
+        } else if (currentAnimal === "octopus") {
           octopusIndex = (octopusIndex - 1 + octopusFacts.length) % octopusFacts.length;
           factEl.textContent = octopusFacts[octopusIndex];
         }
@@ -125,28 +125,45 @@
         if (currentAnimal === "whale") {
           whaleIndex = (whaleIndex + 1) % whaleFacts.length;
           factEl.textContent = whaleFacts[whaleIndex];
-        } else {
+        } else if (currentAnimal === "octopus") {
           octopusIndex = (octopusIndex + 1) % octopusFacts.length;
           factEl.textContent = octopusFacts[octopusIndex];
         }
       });
 
-      // Cambiar entre animales al detectar el target
-      const whaleTarget = document.querySelector("[mindar-image-target='targetIndex: 0']");
-      const octopusTarget = document.querySelector("[mindar-image-target='targetIndex: 1']");
+      // Targets
+      const whaleTarget = document.getElementById("target-whale");
+      const octopusTarget = document.getElementById("target-octopus");
 
       whaleTarget.addEventListener("targetFound", () => {
         currentAnimal = "whale";
+        whaleIndex = 0;
         titleEl.textContent = "Ballena";
         factEl.textContent = whaleFacts[whaleIndex];
+        menu.style.display = "block"; // mostrar menú
+      });
+
+      whaleTarget.addEventListener("targetLost", () => {
+        if (currentAnimal === "whale") {
+          menu.style.display = "none"; // ocultar menú
+        }
       });
 
       octopusTarget.addEventListener("targetFound", () => {
         currentAnimal = "octopus";
+        octopusIndex = 0;
         titleEl.textContent = "Pulpo";
         factEl.textContent = octopusFacts[octopusIndex];
+        menu.style.display = "block"; // mostrar menú
+      });
+
+      octopusTarget.addEventListener("targetLost", () => {
+        if (currentAnimal === "octopus") {
+          menu.style.display = "none"; // ocultar menú
+        }
       });
     </script>
   </body>
 </html>
+
 
