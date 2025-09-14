@@ -4,26 +4,60 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      #message {
+      #menu {
         position: fixed;
-        top: 20px;
+        bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.7);
-        color: white;
         padding: 10px 20px;
-        border-radius: 10px;
+        border-radius: 15px;
+        color: white;
         font-family: sans-serif;
-        display: none;
         z-index: 999;
+        text-align: center;
+        width: 80%;
+        max-width: 400px;
+      }
+
+      #menu button {
+        margin: 5px;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 10px;
+        background: #1e90ff;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      #menu button:hover {
+        background: #4682b4;
+      }
+
+      #fact-box {
+        margin-top: 10px;
+        font-size: 14px;
       }
     </style>
   </head>
   <body>
-    <div id="message"></div>
+    <!-- Menú flotante -->
+    <div id="menu">
+      <div>
+        <button id="btnWhale">🐳 Ballena</button>
+        <button id="btnOctopus">🐙 Pulpo</button>
+      </div>
+      <div id="fact-box">Selecciona un animal para ver curiosidades</div>
+      <div>
+        <button id="btnPrev">⬅️ Anterior</button>
+        <button id="btnNext">➡️ Siguiente</button>
+      </div>
+    </div>
 
+    <!-- Escena AR -->
     <a-scene
-      mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
+      mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
@@ -36,10 +70,10 @@
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- Target 0: Ballena -->
+      <!-- Target único -->
       <a-entity id="target-0" mindar-image-target="targetIndex: 0">
         <a-gltf-model
-          id="model-whale"
+          id="animal-model"
           src="#WhaleModel"
           rotation="0 0 0"
           position="0 0 0"
@@ -48,50 +82,71 @@
           animation__spin="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear"
         ></a-gltf-model>
       </a-entity>
-
-      <!-- Target 1: Pulpo -->
-      <a-entity id="target-1" mindar-image-target="targetIndex: 1">
-        <a-gltf-model
-          id="model-octopus"
-          src="#OctopusModel"
-          rotation="0 0 0"
-          position="0 -0.25 0"
-          scale="0.05 0.05 0.05"
-          animation__updown="property: position; to: 0 0.1 0; dur: 1500; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 4000; loop: true; easing: linear"
-        ></a-gltf-model>
-      </a-entity>
     </a-scene>
 
     <script>
-      const messageBox = document.querySelector("#message");
-      const target0 = document.querySelector("#target-0");
-      const target1 = document.querySelector("#target-1");
+      const model = document.querySelector("#animal-model");
+      const factBox = document.querySelector("#fact-box");
 
-      // Eventos para target 0 (Ballena)
-      target0.addEventListener("targetFound", () => {
-        showMessage("🐳 Se detectó el marcador de la Ballena");
-      });
-      target0.addEventListener("targetLost", () => {
-        showMessage("🐳 Marcador de la Ballena perdido");
-      });
+      // Datos curiosos
+      const facts = {
+        whale: [
+          "Las ballenas azules son los animales más grandes que han existido.",
+          "Su corazón puede pesar lo mismo que un coche pequeño.",
+          "Se comunican con cantos que viajan grandes distancias bajo el agua."
+        ],
+        octopus: [
+          "Los pulpos tienen tres corazones y sangre azul.",
+          "Pueden cambiar de color y textura para camuflarse.",
+          "Son considerados de los invertebrados más inteligentes."
+        ]
+      };
 
-      // Eventos para target 1 (Pulpo)
-      target1.addEventListener("targetFound", () => {
-        showMessage("🐙 Se detectó el marcador del Pulpo");
-      });
-      target1.addEventListener("targetLost", () => {
-        showMessage("🐙 Marcador del Pulpo perdido");
-      });
+      let currentAnimal = "whale";
+      let factIndex = 0;
 
-      // Función para mostrar mensajes sin bloquear
-      function showMessage(text) {
-        messageBox.innerText = text;
-        messageBox.style.display = "block";
-        setTimeout(() => {
-          messageBox.style.display = "none";
-        }, 2000);
+      // --- Función para mostrar curiosidad ---
+      function showFact() {
+        factBox.innerText = facts[currentAnimal][factIndex];
       }
+
+      // --- Botones para cambiar de animal ---
+      document.querySelector("#btnWhale").addEventListener("click", () => {
+        model.setAttribute("src", "#WhaleModel");
+        model.setAttribute("scale", "0.7 0.7 0.7");
+        model.setAttribute("position", "0 0 0");
+        currentAnimal = "whale";
+        factIndex = 0;
+        showFact();
+      });
+
+      document.querySelector("#btnOctopus").addEventListener("click", () => {
+        model.setAttribute("src", "#OctopusModel");
+        model.setAttribute("scale", "0.05 0.05 0.05");
+        model.setAttribute("position", "0 -0.25 0");
+        currentAnimal = "octopus";
+        factIndex = 0;
+        showFact();
+      });
+
+      // --- Botones para navegar entre curiosidades ---
+      document.querySelector("#btnNext").addEventListener("click", () => {
+        if (factIndex < facts[currentAnimal].length - 1) {
+          factIndex++;
+        } else {
+          factIndex = 0;
+        }
+        showFact();
+      });
+
+      document.querySelector("#btnPrev").addEventListener("click", () => {
+        if (factIndex > 0) {
+          factIndex--;
+        } else {
+          factIndex = facts[currentAnimal].length - 1;
+        }
+        showFact();
+      });
     </script>
   </body>
 </html>
