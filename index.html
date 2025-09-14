@@ -3,149 +3,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-    <style>
-      #menu {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.7);
-        padding: 10px 20px;
-        border-radius: 15px;
-        color: white;
-        font-family: sans-serif;
-        z-index: 999;
-        text-align: center;
-        width: 80%;
-        max-width: 400px;
-      }
-
-      #menu button {
-        margin: 5px;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 10px;
-        background: #1e90ff;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      #menu button:hover {
-        background: #4682b4;
-      }
-
-      #fact-box {
-        margin-top: 10px;
-        font-size: 14px;
-      }
-    </style>
   </head>
   <body>
-    <!-- Menú flotante -->
-    <div id="menu">
-      <div>
-        <button id="btnWhale">🐳 Ballena</button>
-        <button id="btnOctopus">🐙 Pulpo</button>
-      </div>
-      <div id="fact-box">Selecciona un animal para ver curiosidades</div>
-      <div>
-        <button id="btnPrev">⬅️ Anterior</button>
-        <button id="btnNext">➡️ Siguiente</button>
-      </div>
-    </div>
-
-    <!-- Escena AR -->
     <a-scene
-      mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1"
+      mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <a-asset-item id="WhaleModel" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="OctopusModel" src="./Octopus.glb"></a-asset-item>
+        <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="OctupusO3" src="./Octopus.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-      <!-- Target único -->
-      <a-entity id="target-0" mindar-image-target="targetIndex: 0">
+      <!-- Ballena -->
+      <a-entity mindar-image-target="targetIndex: 0">
         <a-gltf-model
-          id="animal-model"
-          src="#WhaleModel"
-          rotation="0 0 0"
+          id="whale-model"
+          src="#WhaleO3"
           position="0 0 0"
           scale="0.7 0.7 0.7"
-          animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 5000; loop: true; easing: linear"
         ></a-gltf-model>
+
+        <!-- Menú de ballena -->
+        <a-entity id="whale-menu" position="0 0.8 0">
+          <a-plane color="#000" width="1.5" height="0.5" opacity="0.6"></a-plane>
+          <a-text
+            id="whale-text"
+            value="Dato curioso 1: Las ballenas son los animales más grandes del planeta."
+            align="center"
+            color="#FFF"
+            width="1.4"
+            position="0 0 0.01"
+          ></a-text>
+          <a-entity id="whale-prev" geometry="primitive: plane; width: 0.3; height: 0.2"
+            material="color: blue"
+            position="-0.7 -0.3 0.01"
+            text="value: Anterior; align: center; color: white; width: 1">
+          </a-entity>
+          <a-entity id="whale-next" geometry="primitive: plane; width: 0.3; height: 0.2"
+            material="color: blue"
+            position="0.7 -0.3 0.01"
+            text="value: Siguiente; align: center; color: white; width: 1">
+          </a-entity>
+        </a-entity>
+      </a-entity>
+
+      <!-- Pulpo -->
+      <a-entity mindar-image-target="targetIndex: 1">
+        <a-gltf-model
+          id="octopus-model"
+          src="#OctupusO3"
+          position="0 -0.25 0"
+          scale="0.05 0.05 0.05"
+        ></a-gltf-model>
+
+        <!-- Menú de pulpo -->
+        <a-entity id="octopus-menu" position="0 0.8 0">
+          <a-plane color="#000" width="1.5" height="0.5" opacity="0.6"></a-plane>
+          <a-text
+            id="octopus-text"
+            value="Dato curioso 1: Los pulpos tienen tres corazones."
+            align="center"
+            color="#FFF"
+            width="1.4"
+            position="0 0 0.01"
+          ></a-text>
+          <a-entity id="octopus-prev" geometry="primitive: plane; width: 0.3; height: 0.2"
+            material="color: blue"
+            position="-0.7 -0.3 0.01"
+            text="value: Anterior; align: center; color: white; width: 1">
+          </a-entity>
+          <a-entity id="octopus-next" geometry="primitive: plane; width: 0.3; height: 0.2"
+            material="color: blue"
+            position="0.7 -0.3 0.01"
+            text="value: Siguiente; align: center; color: white; width: 1">
+          </a-entity>
+        </a-entity>
       </a-entity>
     </a-scene>
 
     <script>
-      const model = document.querySelector("#animal-model");
-      const factBox = document.querySelector("#fact-box");
+      // Datos curiosos de cada animal
+      const whaleFacts = [
+        "Dato curioso 1: Las ballenas son los animales más grandes del planeta.",
+        "Dato curioso 2: Las ballenas jorobadas pueden cantar canciones complejas.",
+        "Dato curioso 3: El corazón de una ballena azul puede pesar más de 150 kg."
+      ];
 
-      // Datos curiosos
-      const facts = {
-        whale: [
-          "Las ballenas azules son los animales más grandes que han existido.",
-          "Su corazón puede pesar lo mismo que un coche pequeño.",
-          "Se comunican con cantos que viajan grandes distancias bajo el agua."
-        ],
-        octopus: [
-          "Los pulpos tienen tres corazones y sangre azul.",
-          "Pueden cambiar de color y textura para camuflarse.",
-          "Son considerados de los invertebrados más inteligentes."
-        ]
-      };
+      const octopusFacts = [
+        "Dato curioso 1: Los pulpos tienen tres corazones.",
+        "Dato curioso 2: Los pulpos pueden cambiar de color y textura para camuflarse.",
+        "Dato curioso 3: Son considerados los invertebrados más inteligentes."
+      ];
 
-      let currentAnimal = "whale";
-      let factIndex = 0;
+      let whaleIndex = 0;
+      let octopusIndex = 0;
 
-      // --- Función para mostrar curiosidad ---
-      function showFact() {
-        factBox.innerText = facts[currentAnimal][factIndex];
-      }
-
-      // --- Botones para cambiar de animal ---
-      document.querySelector("#btnWhale").addEventListener("click", () => {
-        model.setAttribute("src", "#WhaleModel");
-        model.setAttribute("scale", "0.7 0.7 0.7");
-        model.setAttribute("position", "0 0 0");
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
+      // Ballena
+      document.querySelector("#whale-prev").addEventListener("click", () => {
+        whaleIndex = (whaleIndex - 1 + whaleFacts.length) % whaleFacts.length;
+        document.querySelector("#whale-text").setAttribute("value", whaleFacts[whaleIndex]);
       });
 
-      document.querySelector("#btnOctopus").addEventListener("click", () => {
-        model.setAttribute("src", "#OctopusModel");
-        model.setAttribute("scale", "0.05 0.05 0.05");
-        model.setAttribute("position", "0 -0.25 0");
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
+      document.querySelector("#whale-next").addEventListener("click", () => {
+        whaleIndex = (whaleIndex + 1) % whaleFacts.length;
+        document.querySelector("#whale-text").setAttribute("value", whaleFacts[whaleIndex]);
       });
 
-      // --- Botones para navegar entre curiosidades ---
-      document.querySelector("#btnNext").addEventListener("click", () => {
-        if (factIndex < facts[currentAnimal].length - 1) {
-          factIndex++;
-        } else {
-          factIndex = 0;
-        }
-        showFact();
+      // Pulpo
+      document.querySelector("#octopus-prev").addEventListener("click", () => {
+        octopusIndex = (octopusIndex - 1 + octopusFacts.length) % octopusFacts.length;
+        document.querySelector("#octopus-text").setAttribute("value", octopusFacts[octopusIndex]);
       });
 
-      document.querySelector("#btnPrev").addEventListener("click", () => {
-        if (factIndex > 0) {
-          factIndex--;
-        } else {
-          factIndex = facts[currentAnimal].length - 1;
-        }
-        showFact();
+      document.querySelector("#octopus-next").addEventListener("click", () => {
+        octopusIndex = (octopusIndex + 1) % octopusFacts.length;
+        document.querySelector("#octopus-text").setAttribute("value", octopusFacts[octopusIndex]);
       });
     </script>
   </body>
