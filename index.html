@@ -19,6 +19,7 @@
         text-align: center;
         width: 80%;
         max-width: 400px;
+        display: none; /* Oculto hasta detectar target */
       }
 
       #menu button {
@@ -45,11 +46,7 @@
   <body>
     <!-- Menú flotante -->
     <div id="menu">
-      <div>
-        <button id="btnWhale">🐳 Ballena</button>
-        <button id="btnOctopus">🐙 Pulpo</button>
-      </div>
-      <div id="fact-box">Selecciona un animal para ver curiosidades</div>
+      <div id="fact-box">Escanea un animal para ver curiosidades</div>
       <div>
         <button id="btnPrev">⬅️ Anterior</button>
         <button id="btnNext">➡️ Siguiente</button>
@@ -74,7 +71,6 @@
       <!-- Ballena -->
       <a-entity id="target-whale" mindar-image-target="targetIndex: 0">
         <a-gltf-model
-          id="whale-model"
           src="#WhaleModel"
           position="0 0 0"
           scale="0.7 0.7 0.7"
@@ -87,7 +83,6 @@
       <!-- Pulpo -->
       <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
         <a-gltf-model
-          id="octopus-model"
           src="#OctopusModel"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
@@ -100,99 +95,11 @@
 
     <script>
       const factBox = document.querySelector("#fact-box");
+      const menu = document.querySelector("#menu");
 
       const facts = {
         whale: [
           "Las ballenas azules son los animales más grandes que han existido.",
           "Su corazón puede pesar lo mismo que un coche pequeño.",
-          "Se comunican con cantos que viajan grandes distancias bajo el agua."
-        ],
-        octopus: [
-          "Los pulpos tienen tres corazones y sangre azul.",
-          "Pueden cambiar de color y textura para camuflarse.",
-          "Son considerados de los invertebrados más inteligentes."
-        ]
-      };
-
-      let currentAnimal = null;
-      let factIndex = 0;
-
-      // Flags de detección
-      let whaleDetected = false;
-      let octopusDetected = false;
-
-      const whaleModel = document.getElementById("whale-model");
-      const octopusModel = document.getElementById("octopus-model");
-
-      const menu = document.getElementById("menu");
-
-      function showFact() {
-        factBox.innerText = facts[currentAnimal][factIndex];
-      }
-
-      function updateMenuVisibility() {
-        // Mostrar menú solo si exactamente un target está detectado
-        if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
-          menu.style.display = "block";
-        } else {
-          menu.style.display = "none";
-        }
-      }
-
-      // --- Eventos de detección ---
-      document.getElementById("target-whale").addEventListener("targetFound", () => {
-        whaleDetected = true;
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
-        updateMenuVisibility();
-      });
-      document.getElementById("target-whale").addEventListener("targetLost", () => {
-        whaleDetected = false;
-        updateMenuVisibility();
-      });
-
-      document.getElementById("target-octopus").addEventListener("targetFound", () => {
-        octopusDetected = true;
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
-        updateMenuVisibility();
-      });
-      document.getElementById("target-octopus").addEventListener("targetLost", () => {
-        octopusDetected = false;
-        updateMenuVisibility();
-      });
-
-      // --- Botones para cambiar animal ---
-      document.querySelector("#btnWhale").addEventListener("click", () => {
-        whaleModel.setAttribute("visible", true);
-        octopusModel.setAttribute("visible", false);
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
-      });
-
-      document.querySelector("#btnOctopus").addEventListener("click", () => {
-        whaleModel.setAttribute("visible", false);
-        octopusModel.setAttribute("visible", true);
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
-      });
-
-      // --- Botones para navegar curiosidades ---
-      document.querySelector("#btnNext").addEventListener("click", () => {
-        factIndex = (factIndex + 1) % facts[currentAnimal].length;
-        showFact();
-      });
-
-      document.querySelector("#btnPrev").addEventListener("click", () => {
-        factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
-        showFact();
-      });
-    </script>
-  </body>
-</html>
-
+          "
 
