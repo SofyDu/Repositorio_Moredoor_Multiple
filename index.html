@@ -19,7 +19,7 @@
         text-align: center;
         width: 80%;
         max-width: 400px;
-        display: none; /* oculto por defecto */
+        display: none;
       }
 
       #menu button {
@@ -42,24 +42,36 @@
         font-size: 14px;
       }
 
-      /* 🔹 Mensaje inicial */
-      #message {
+      /* Mensaje de búsqueda */
+      #scan-message {
         position: fixed;
         top: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.75);
+        padding: 12px 18px;
+        border-radius: 12px;
         color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 16px;
         font-family: sans-serif;
         z-index: 1000;
-        display: block; /* visible por defecto */
+        text-align: center;
+      }
+
+      #scan-message img {
+        display: block;
+        margin: 10px auto 0 auto;
+        max-width: 150px;
+        border-radius: 8px;
       }
     </style>
   </head>
   <body>
+    <!-- MENSAJE ESCANEAR -->
+    <div id="scan-message">
+      Apunta tu cámara hacia la imagen para comenzar
+      <img src="./target-preview.png" alt="Target a escanear">
+    </div>
+
     <!-- Menú flotante -->
     <div id="menu">
       <div id="fact-box">Selecciona un animal para ver curiosidades</div>
@@ -68,9 +80,6 @@
         <button id="btnNext">➡️ Siguiente</button>
       </div>
     </div>
-
-    <!-- 🔹 Mensaje flotante -->
-    <div id="message">📷 Apunta tu cámara a un marcador para comenzar</div>
 
     <!-- Escena AR -->
     <a-scene
@@ -117,7 +126,7 @@
     <script>
       const factBox = document.querySelector("#fact-box");
       const menu = document.querySelector("#menu");
-      const message = document.querySelector("#message");
+      const scanMessage = document.querySelector("#scan-message");
 
       const facts = {
         whale: [
@@ -134,7 +143,6 @@
 
       let currentAnimal = null;
       let factIndex = 0;
-
       let whaleDetected = false;
       let octopusDetected = false;
 
@@ -147,13 +155,12 @@
       function updateMenuVisibility() {
         if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
           menu.style.display = "block";
-          message.style.display = "none";
-        } else if (whaleDetected && octopusDetected) {
-          menu.style.display = "none";
-          message.style.display = "none";
+          scanMessage.style.display = "none"; // oculta mensaje al detectar uno
         } else {
           menu.style.display = "none";
-          message.style.display = "block";
+          if (!whaleDetected && !octopusDetected) {
+            scanMessage.style.display = "block"; // vuelve a mostrar mensaje si no hay ninguno
+          }
         }
       }
 
@@ -204,8 +211,6 @@
     </script>
   </body>
 </html>
-
-
 
 
 
