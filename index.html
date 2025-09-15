@@ -5,7 +5,7 @@
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      #menu, #model-buttons {
+      #menu {
         position: fixed;
         bottom: 5px;
         left: 50%;
@@ -17,12 +17,11 @@
         font-family: sans-serif;
         z-index: 999;
         text-align: center;
-        width: 90%;
-        max-width: 450px;
+        width: 80%;
+        max-width: 400px;
         display: none;
       }
-
-      #menu button, #model-buttons button {
+      #menu button {
         margin: 5px;
         padding: 8px 15px;
         border: none;
@@ -32,65 +31,38 @@
         font-weight: bold;
         cursor: pointer;
       }
-
-      #menu button:hover, #model-buttons button:hover {
-        background: #4682b4;
-      }
-
+      #menu button:hover { background: #4682b4; }
       #fact-box { margin-top: 10px; font-size: 14px; }
-
       #scan-message {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(0, 0, 0, 0.75);
-        padding: 12px 18px;
-        border-radius: 12px;
-        color: white;
-        font-family: sans-serif;
-        z-index: 1000;
-        text-align: center;
+        position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+        background: rgba(0,0,0,0.75); padding: 12px 18px; border-radius: 12px;
+        color: white; font-family: sans-serif; z-index: 1000; text-align: center;
       }
-
-      #scan-message img {
-        display: block;
-        margin: 10px auto 0 auto;
-        max-width: 150px;
-        border-radius: 8px;
-      }
-
-      /* Botones de control */
+      #scan-message img { display: block; margin: 10px auto 0 auto; max-width: 150px; border-radius: 8px; }
       #controls {
-        position: fixed;
-        bottom: 140px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
+        position: fixed; bottom: 125px; left: 50%; transform: translateX(-50%);
+        z-index: 1000; display: flex; gap: 10px;
       }
-
       #controls button {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 8px;
-        background: #444;
-        color: white;
-        cursor: pointer;
+        padding: 6px 12px; border: none; border-radius: 8px; background: #444;
+        color: white; cursor: pointer;
+      }
+      #model-switch {
+        position: fixed; bottom: 200px; left: 50%; transform: translateX(-50%);
+        z-index: 1001; display: none; gap: 10px;
+      }
+      #model-switch button {
+        padding: 6px 12px; border: none; border-radius: 8px; background: #28a745;
+        color: white; cursor: pointer;
       }
     </style>
   </head>
   <body>
-    <!-- MENSAJE ESCANEAR -->
     <div id="scan-message">
       Apunta tu cámara hacia las imágenes para comenzar
-      <img id="scan-image" src="./target1.png" alt="Target a escanear">
+      <img id="scan-image" src="./Ballena3.png" alt="Target a escanear">
     </div>
 
-    <!-- Menú flotante -->
     <div id="menu">
       <div id="fact-box">Selecciona un animal para ver curiosidades</div>
       <div>
@@ -99,19 +71,14 @@
       </div>
     </div>
 
-    <!-- Botones cambio de modelos -->
-    <div id="model-buttons"></div>
-
-    <!-- Controles AR -->
     <div id="controls">
       <button id="btnStart">▶️ Start</button>
       <button id="btnPause">⏸ Pause</button>
-      <button id="btnPauseVideo">⏸ Pause (keep video)</button>
-      <button id="btnUnPause">🔄 UnPause</button>
       <button id="btnStop">⏹ Stop</button>
     </div>
 
-    <!-- Escena AR -->
+    <div id="model-switch"></div>
+
     <a-scene
       mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
       color-space="sRGB"
@@ -120,40 +87,44 @@
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <!-- Modelos ballena -->
+        <!-- Ballenas -->
         <a-asset-item id="WhaleModel1" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="WhaleModel2" src="./WhaleO2.glb"></a-asset-item>
-        <!-- Modelos pulpo -->
+        <a-asset-item id="WhaleModel2" src="./WhaleO3.glb"></a-asset-item>
+        <!-- Pulpos -->
         <a-asset-item id="OctopusModel1" src="./Octopus.glb"></a-asset-item>
-        <a-asset-item id="OctopusModel2" src="./Octopus2.glb"></a-asset-item>
+        <a-asset-item id="OctopusModel2" src="./Octopus(1).glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <!-- Ballena -->
       <a-entity id="target-whale" mindar-image-target="targetIndex: 0">
-        <a-gltf-model id="whale-model"
-          src="#WhaleModel1"
-          position="0 0 0"
-          scale="0.7 0.7 0.7"
-          rotation="0 0 0"
-          visible="true"
-          animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear">
-        </a-gltf-model>
+        <a-entity id="ballenaModel1" gltf-model="#WhaleModel1" 
+          position="0 .2 0" rotation="0 90 0" scale="0.9 0.9 0.9" visible="true"
+          animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 0.4 0"
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+        </a-entity>
+
+        <a-entity id="ballenaModel2" gltf-model="#WhaleModel2" 
+          position="0 -0.3 0" rotation="0 90 0" scale="0.03 0.03 0.03" visible="false"
+          animation__updown="property: position; dir:alternate; loop:true; dur:2000; easing:easeInOutSine; to: 0 -0.1 0"
+          animation__spin="property: rotation; to: 0 450 0; dur:6000; loop:true; easing:linear">
+        </a-entity>
       </a-entity>
 
       <!-- Pulpo -->
       <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
-        <a-gltf-model id="octopus-model"
-          src="#OctopusModel1"
-          position="0 -0.25 0"
-          scale="0.05 0.05 0.05"
-          rotation="0 0 0"
-          visible="true"
-          animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear">
-        </a-gltf-model>
+        <a-entity id="pulpoModel1" gltf-model="#OctopusModel1" 
+          position="0 -0.25 0" rotation="0 90 0" scale="0.05 0.05 0.05" visible="true"
+          animation__updown="property: position; dir:alternate; loop:true; dur:2500; easing:easeInOutSine; to: 0 -0.05 0"
+          animation__spin="property: rotation; to: 0 450 0; dur:8000; loop:true; easing:linear">
+        </a-entity>
+
+        <a-entity id="pulpoModel2" gltf-model="#OctopusModel2" 
+          position="0 -0.4 0" rotation="0 90 0" scale="0.07 0.07 0.07" visible="false"
+          animation__updown="property: position; dir:alternate; loop:true; dur:2500; easing:easeInOutSine; to: 0 -0.2 0"
+          animation__spin="property: rotation; to: 0 450 0; dur:8000; loop:true; easing:linear">
+        </a-entity>
       </a-entity>
     </a-scene>
 
@@ -161,7 +132,16 @@
       const factBox = document.querySelector("#fact-box");
       const menu = document.querySelector("#menu");
       const scanMessage = document.querySelector("#scan-message");
-      const modelButtons = document.querySelector("#model-buttons");
+      const modelSwitch = document.querySelector("#model-switch");
+
+      const whaleModels = [
+        document.querySelector("#ballenaModel1"),
+        document.querySelector("#ballenaModel2")
+      ];
+      const octopusModels = [
+        document.querySelector("#pulpoModel1"),
+        document.querySelector("#pulpoModel2")
+      ];
 
       const facts = {
         whale: [
@@ -181,108 +161,66 @@
       let whaleDetected = false;
       let octopusDetected = false;
 
-      function showFact() {
-        if (currentAnimal) {
-          factBox.innerText = facts[currentAnimal][factIndex];
-        }
-      }
+      function showFact() { if(currentAnimal) factBox.innerText = facts[currentAnimal][factIndex]; }
 
-      function updateUI() {
-        if (whaleDetected || octopusDetected) {
-          menu.style.display = "block";
-          scanMessage.style.display = "none";
-          modelButtons.style.display = "block";
-          modelButtons.innerHTML = "";
-
+      function updateMenuVisibility() {
+        if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
+          menu.style.display = "block"; scanMessage.style.display = "none";
           if (whaleDetected) {
-            modelButtons.innerHTML = `
-              <button onclick="changeModel('whale', 1)">🐋 Modelo 1</button>
-              <button onclick="changeModel('whale', 2)">🐋 Modelo 2</button>`;
+            modelSwitch.innerHTML = `
+              <button onclick="switchWhaleModel(0)">Ballena 1</button>
+              <button onclick="switchWhaleModel(1)">Ballena 2</button>
+            `;
+            modelSwitch.style.display = "flex";
           } else if (octopusDetected) {
-            modelButtons.innerHTML = `
-              <button onclick="changeModel('octopus', 1)">🐙 Modelo 1</button>
-              <button onclick="changeModel('octopus', 2)">🐙 Modelo 2</button>`;
+            modelSwitch.innerHTML = `
+              <button onclick="switchOctopusModel(0)">Pulpo 1</button>
+              <button onclick="switchOctopusModel(1)">Pulpo 2</button>
+            `;
+            modelSwitch.style.display = "flex";
           }
-        } else {
-          menu.style.display = "none";
-          modelButtons.style.display = "none";
-          scanMessage.style.display = "block";
-        }
+        } else { menu.style.display = "none"; modelSwitch.style.display = "none"; 
+          if(!whaleDetected && !octopusDetected) scanMessage.style.display = "block"; }
       }
 
-      // Cambiar modelo
-      window.changeModel = function(animal, modelNumber) {
-        if (animal === "whale") {
-          document.querySelector("#whale-model").setAttribute("src", modelNumber === 1 ? "#WhaleModel1" : "#WhaleModel2");
-        } else if (animal === "octopus") {
-          document.querySelector("#octopus-model").setAttribute("src", modelNumber === 1 ? "#OctopusModel1" : "#OctopusModel2");
-        }
-      };
+      window.switchWhaleModel = (index) => whaleModels.forEach((m,i)=>m.setAttribute("visible", i===index));
+      window.switchOctopusModel = (index) => octopusModels.forEach((m,i)=>m.setAttribute("visible", i===index));
 
-      // Eventos detección
-      document.getElementById("target-whale").addEventListener("targetFound", () => {
-        whaleDetected = true;
-        currentAnimal = "whale";
-        factIndex = 0;
-        showFact();
-        updateUI();
+      document.getElementById("target-whale").addEventListener("targetFound", ()=>{
+        whaleDetected=true; if(!octopusDetected){currentAnimal="whale";factIndex=0;showFact();}
+        updateMenuVisibility();
       });
-      document.getElementById("target-whale").addEventListener("targetLost", () => {
-        whaleDetected = false;
-        updateUI();
+      document.getElementById("target-whale").addEventListener("targetLost", ()=>{
+        whaleDetected=false; updateMenuVisibility();
+      });
+      document.getElementById("target-octopus").addEventListener("targetFound", ()=>{
+        octopusDetected=true; if(!whaleDetected){currentAnimal="octopus";factIndex=0;showFact();}
+        updateMenuVisibility();
+      });
+      document.getElementById("target-octopus").addEventListener("targetLost", ()=>{
+        octopusDetected=false; updateMenuVisibility();
       });
 
-      document.getElementById("target-octopus").addEventListener("targetFound", () => {
-        octopusDetected = true;
-        currentAnimal = "octopus";
-        factIndex = 0;
-        showFact();
-        updateUI();
+      document.querySelector("#btnNext").addEventListener("click", ()=>{
+        if(currentAnimal){ factIndex=(factIndex+1)%facts[currentAnimal].length; showFact(); }
       });
-      document.getElementById("target-octopus").addEventListener("targetLost", () => {
-        octopusDetected = false;
-        updateUI();
+      document.querySelector("#btnPrev").addEventListener("click", ()=>{
+        if(currentAnimal){ factIndex=(factIndex-1+facts[currentAnimal].length)%facts[currentAnimal].length; showFact(); }
       });
 
-      // Botones curiosidades
-      document.querySelector("#btnNext").addEventListener("click", () => {
-        if (currentAnimal) {
-          factIndex = (factIndex + 1) % facts[currentAnimal].length;
-          showFact();
-        }
-      });
-      document.querySelector("#btnPrev").addEventListener("click", () => {
-        if (currentAnimal) {
-          factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
-          showFact();
-        }
-      });
-
-      // Rotación de imágenes del mensaje
       const scanImage = document.querySelector("#scan-image");
-      const scanImages = ["./Ballena3.png", "./OctupusO3.png"];
-      let scanIndex = 0;
-      setInterval(() => {
-        scanIndex = (scanIndex + 1) % scanImages.length;
-        scanImage.src = scanImages[scanIndex];
-      }, 2000);
+      const scanImages = ["./Ballena3.png","./OctupusO3.png"];
+      let scanIndex=0;
+      setInterval(()=>{scanIndex=(scanIndex+1)%scanImages.length; scanImage.src=scanImages[scanIndex];},2000);
 
-      // Eventos globales
-      const sceneEl = document.querySelector("a-scene");
-      let arSystem;
-      sceneEl.addEventListener("loaded", () => { arSystem = sceneEl.systems["mindar-image-system"]; });
-      sceneEl.addEventListener("arReady", () => { console.log("AR listo ✅"); });
-      sceneEl.addEventListener("arError", (err) => { console.error("Error AR ❌", err); });
+      const sceneEl=document.querySelector("a-scene"); let arSystem;
+      sceneEl.addEventListener("loaded",()=>{arSystem=sceneEl.systems["mindar-image-system"];});
+      sceneEl.addEventListener("arReady",()=>console.log("AR listo ✅"));
+      sceneEl.addEventListener("arError",(err)=>console.error("Error AR ❌",err));
 
-      // Controles Start / Pause / Stop
-      document.querySelector("#btnStart").addEventListener("click", () => { arSystem.start(); });
-      document.querySelector("#btnPause").addEventListener("click", () => { arSystem.pause(false); });
-      document.querySelector("#btnPauseVideo").addEventListener("click", () => { arSystem.pause(true); });
-      document.querySelector("#btnUnPause").addEventListener("click", () => { arSystem.unpause(); });
-      document.querySelector("#btnStop").addEventListener("click", () => { arSystem.stop(); });
+      document.querySelector("#btnStart").addEventListener("click",()=>arSystem.start());
+      document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
+      document.querySelector("#btnStop").addEventListener("click",()=>arSystem.stop());
     </script>
   </body>
 </html>
-
-
-
