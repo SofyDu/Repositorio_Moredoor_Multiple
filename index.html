@@ -68,8 +68,8 @@
   <body>
     <!-- MENSAJE ESCANEAR -->
     <div id="scan-message">
-      Apunta tu cámara hacia la imagen para comenzar
-      <img src="./target-preview.png" alt="Target a escanear">
+      Apunta tu cámara hacia las imágenes para comenzar
+      <img id="scan-image" src="./target1.png" alt="Target a escanear">
     </div>
 
     <!-- Menú flotante -->
@@ -208,9 +208,17 @@
           showFact();
         }
       });
+
+      // -------- NUEVO: Rotación de imágenes en el mensaje --------
+      const scanImage = document.querySelector("#scan-image");
+      const scanImages = ["./Ballena3.png", "./OctupusO3.png"]; // tus 2 imágenes de target
+      let scanIndex = 0;
+
+      setInterval(() => {
+        scanIndex = (scanIndex + 1) % scanImages.length;
+        scanImage.src = scanImages[scanIndex];
+      }, 2000); // cambia cada 2 segundos
     </script>
   </body>
 </html>
-
-
 
