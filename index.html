@@ -1,4 +1,31 @@
-<html>
+[21:42, 13/9/2025] Møredoōr: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+  <body>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-assets>
+        <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="OctupusO3" src="./Octop…
+[23:26, 13/9/2025] Møredoōr: -o-oo-o-o--o-o-o-o-o-o-o-o--o-o-o---o-o-o
+[23:26, 13/9/2025] Møredoōr: <html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+  </head>
+  <body>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-assets>
+        <a-asset-item id="WhaleO3" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="OctupusO3" src="./Octop…
+[23:33, 13/9/2025] Møredoōr: Manejo de eventos prueba: https://hiukim.github.io/mind-ar-js-doc/samples/events.html
+[18:59, 14/9/2025] Møredoōr: -o-o-o-o--o-o-o-o-o-o--o-o-o
+[18:59, 14/9/2025] Møredoōr: <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -21,6 +48,7 @@
         max-width: 400px;
         display: none;
       }
+
       #menu button {
         margin: 5px;
         padding: 8px 15px;
@@ -31,53 +59,52 @@
         font-weight: bold;
         cursor: pointer;
       }
+
       #menu button:hover {
         background: #4682b4;
       }
+
       #fact-box {
         margin-top: 10px;
         font-size: 14px;
       }
+
+      /* Mensaje de búsqueda */
       #scan-message {
         position: fixed;
         top: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(255, 165, 0, 0.8);
-        padding: 10px 20px;
-        border-radius: 10px;
-        color: black;
+        background: rgba(0, 0, 0, 0.75);
+        padding: 12px 18px;
+        border-radius: 12px;
+        color: white;
         font-family: sans-serif;
         z-index: 1000;
         text-align: center;
       }
-      #scan-image {
-        position: fixed;
-        top: 70px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 150px;
-        z-index: 1000;
+
+      #scan-message img {
+        display: block;
+        margin: 10px auto 0 auto;
+        max-width: 150px;
+        border-radius: 8px;
       }
     </style>
   </head>
   <body>
-    <!-- Mensaje de escaneo -->
-    <div id="scan-message">Apunta tu cámara a uno de los marcadores</div>
-    <img id="scan-image" src="./target1.png" />
+    <!-- MENSAJE ESCANEAR -->
+    <div id="scan-message">
+      Apunta tu cámara hacia las imágenes para comenzar
+      <img id="scan-image" src="./target1.png" alt="Target a escanear">
+    </div>
 
-    <!-- Menú flotante de curiosidades y botones de modelos -->
+    <!-- Menú flotante -->
     <div id="menu">
       <div id="fact-box">Selecciona un animal para ver curiosidades</div>
       <div>
         <button id="btnPrev">⬅️ Anterior</button>
         <button id="btnNext">➡️ Siguiente</button>
-      </div>
-      <div>
-        <button id="btnWhaleModel1">Modelo 1 Ballena</button>
-        <button id="btnWhaleModel2">Modelo 2 Ballena</button>
-        <button id="btnOctopusModel1">Modelo 1 Pulpo</button>
-        <button id="btnOctopusModel2">Modelo 2 Pulpo</button>
       </div>
     </div>
 
@@ -90,10 +117,8 @@
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <a-asset-item id="WhaleModel1" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="WhaleModel2" src="./WhaleO2.glb"></a-asset-item>
-        <a-asset-item id="OctopusModel1" src="./Octopus1.glb"></a-asset-item>
-        <a-asset-item id="OctopusModel2" src="./Octopus2.glb"></a-asset-item>
+        <a-asset-item id="WhaleModel" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="OctopusModel" src="./Octopus.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -101,48 +126,26 @@
       <!-- Ballena -->
       <a-entity id="target-whale" mindar-image-target="targetIndex: 0">
         <a-gltf-model
-          id="whale-model1"
-          src="#WhaleModel1"
+          id="whale-model"
+          src="#WhaleModel"
           position="0 0 0"
           scale="0.7 0.7 0.7"
           rotation="0 0 0"
           animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
           animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear"
-          visible="true"
-        ></a-gltf-model>
-        <a-gltf-model
-          id="whale-model2"
-          src="#WhaleModel2"
-          position="0 0 0"
-          scale="0.7 0.7 0.7"
-          rotation="0 0 0"
-          animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear"
-          visible="false"
         ></a-gltf-model>
       </a-entity>
 
       <!-- Pulpo -->
       <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
         <a-gltf-model
-          id="octopus-model1"
-          src="#OctopusModel1"
+          id="octopus-model"
+          src="#OctopusModel"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
           rotation="0 0 0"
           animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
           animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear"
-          visible="true"
-        ></a-gltf-model>
-        <a-gltf-model
-          id="octopus-model2"
-          src="#OctopusModel2"
-          position="0 -0.25 0"
-          scale="0.05 0.05 0.05"
-          rotation="0 0 0"
-          animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear"
-          visible="false"
         ></a-gltf-model>
       </a-entity>
     </a-scene>
@@ -151,9 +154,7 @@
       const factBox = document.querySelector("#fact-box");
       const menu = document.querySelector("#menu");
       const scanMessage = document.querySelector("#scan-message");
-      const scanImage = document.querySelector("#scan-image");
 
-      // Datos curiosos
       const facts = {
         whale: [
           "Las ballenas azules son los animales más grandes que han existido.",
@@ -172,33 +173,25 @@
       let whaleDetected = false;
       let octopusDetected = false;
 
-      const whaleModel1 = document.querySelector("#whale-model1");
-      const whaleModel2 = document.querySelector("#whale-model2");
-      const octopusModel1 = document.querySelector("#octopus-model1");
-      const octopusModel2 = document.querySelector("#octopus-model2");
-
       function showFact() {
-        if (currentAnimal) factBox.innerText = facts[currentAnimal][factIndex];
-      }
-
-      function updateMenuVisibility() {
-        // Si ambos detectados, ocultar menu
-        if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
-          menu.style.display = "block";
-          scanMessage.style.display = "none";
-          scanImage.style.display = "none";
-        } else if (!whaleDetected && !octopusDetected) {
-          menu.style.display = "none";
-          scanMessage.style.display = "block";
-          scanImage.style.display = "block";
-        } else {
-          menu.style.display = "none";
-          scanMessage.style.display = "none";
-          scanImage.style.display = "none";
+        if (currentAnimal) {
+          factBox.innerText = facts[currentAnimal][factIndex];
         }
       }
 
-      // Detección Ballena
+      function updateMenuVisibility() {
+        if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
+          menu.style.display = "block";
+          scanMessage.style.display = "none"; // oculta mensaje al detectar uno
+        } else {
+          menu.style.display = "none";
+          if (!whaleDetected && !octopusDetected) {
+            scanMessage.style.display = "block"; // vuelve a mostrar mensaje si no hay ninguno
+          }
+        }
+      }
+
+      // Eventos detección ballena
       document.getElementById("target-whale").addEventListener("targetFound", () => {
         whaleDetected = true;
         if (!octopusDetected) {
@@ -213,7 +206,7 @@
         updateMenuVisibility();
       });
 
-      // Detección Pulpo
+      // Eventos detección pulpo
       document.getElementById("target-octopus").addEventListener("targetFound", () => {
         octopusDetected = true;
         if (!whaleDetected) {
@@ -228,13 +221,14 @@
         updateMenuVisibility();
       });
 
-      // Botones de curiosidades
+      // Botones curiosidades
       document.querySelector("#btnNext").addEventListener("click", () => {
         if (currentAnimal) {
           factIndex = (factIndex + 1) % facts[currentAnimal].length;
           showFact();
         }
       });
+
       document.querySelector("#btnPrev").addEventListener("click", () => {
         if (currentAnimal) {
           factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
@@ -242,36 +236,15 @@
         }
       });
 
-      // Botones para cambiar modelos Ballena
-      document.querySelector("#btnWhaleModel1").addEventListener("click", () => {
-        whaleModel1.setAttribute("visible", true);
-        whaleModel2.setAttribute("visible", false);
-      });
-      document.querySelector("#btnWhaleModel2").addEventListener("click", () => {
-        whaleModel1.setAttribute("visible", false);
-        whaleModel2.setAttribute("visible", true);
-      });
+      // -------- NUEVO: Rotación de imágenes en el mensaje --------
+      const scanImage = document.querySelector("#scan-image");
+      const scanImages = ["./Ballena3.png", "./OctupusO3.png"]; // tus 2 imágenes de target
+      let scanIndex = 0;
 
-      // Botones para cambiar modelos Pulpo
-      document.querySelector("#btnOctopusModel1").addEventListener("click", () => {
-        octopusModel1.setAttribute("visible", true);
-        octopusModel2.setAttribute("visible", false);
-      });
-      document.querySelector("#btnOctopusModel2").addEventListener("click", () => {
-        octopusModel1.setAttribute("visible", false);
-        octopusModel2.setAttribute("visible", true);
-      });
-
-      // Cambio automático de imagen de referencia
-      const scanImages = ["./target1.png", "./target2.png"];
-      let imgIndex = 0;
       setInterval(() => {
-        if (!whaleDetected && !octopusDetected) {
-          imgIndex = (imgIndex + 1) % scanImages.length;
-          scanImage.src = scanImages[imgIndex];
-        }
-      }, 3000); // cambia cada 3s
+        scanIndex = (scanIndex + 1) % scanImages.length;
+        scanImage.src = scanImages[scanIndex];
+      }, 2000); // cambia cada 2 segundos
     </script>
   </body>
 </html>
-
