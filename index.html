@@ -143,8 +143,6 @@
         document.querySelector("#pulpoModel2")
       ];
 
-      const allModels = [...whaleModels, ...octopusModels];
-
       const facts = {
         whale: [
           "La ballena azul puede medir hasta 30 metros de largo y pesar más de 150 toneladas.",
@@ -154,7 +152,7 @@
         ],
         octopus: [
           "Los pulpos tienen tres corazones y sangre azul.",
-          "Pueden exprimir su cuerpo para pasar por huecos del tamaño de una moneda",
+           "Pueden exprimir su cuerpo para pasar por huecos del tamaño de una moneda",
           "Pueden cambiar de color y textura para camuflarse en menos de un segundo.",
           "Dos tercios de sus neuronas están en los brazos."
         ]
@@ -183,27 +181,22 @@
             `;
             modelSwitch.style.display = "flex";
           }
-        } else { 
-          menu.style.display = "none"; 
-          modelSwitch.style.display = "none"; 
-          if(!whaleDetected && !octopusDetected) scanMessage.style.display = "block"; 
-        }
+        } else { menu.style.display = "none"; modelSwitch.style.display = "none"; 
+          if(!whaleDetected && !octopusDetected) scanMessage.style.display = "block"; }
       }
 
       window.switchWhaleModel = (index) => whaleModels.forEach((m,i)=>m.setAttribute("visible", i===index));
       window.switchOctopusModel = (index) => octopusModels.forEach((m,i)=>m.setAttribute("visible", i===index));
 
       document.getElementById("target-whale").addEventListener("targetFound", ()=>{
-        whaleDetected=true; 
-        if(!octopusDetected){currentAnimal="whale";factIndex=0;showFact();}
+        whaleDetected=true; if(!octopusDetected){currentAnimal="whale";factIndex=0;showFact();}
         updateMenuVisibility();
       });
       document.getElementById("target-whale").addEventListener("targetLost", ()=>{
         whaleDetected=false; updateMenuVisibility();
       });
       document.getElementById("target-octopus").addEventListener("targetFound", ()=>{
-        octopusDetected=true; 
-        if(!whaleDetected){currentAnimal="octopus";factIndex=0;showFact();}
+        octopusDetected=true; if(!whaleDetected){currentAnimal="octopus";factIndex=0;showFact();}
         updateMenuVisibility();
       });
       document.getElementById("target-octopus").addEventListener("targetLost", ()=>{
@@ -222,38 +215,14 @@
       let scanIndex=0;
       setInterval(()=>{scanIndex=(scanIndex+1)%scanImages.length; scanImage.src=scanImages[scanIndex];},2000);
 
-      const sceneEl=document.querySelector("a-scene"); 
-      let arSystem;
+      const sceneEl=document.querySelector("a-scene"); let arSystem;
       sceneEl.addEventListener("loaded",()=>{arSystem=sceneEl.systems["mindar-image-system"];});
       sceneEl.addEventListener("arReady",()=>console.log("AR listo"));
       sceneEl.addEventListener("arError",(err)=>console.error("Error AR",err));
 
-      // --- Funciones para animaciones y visibilidad ---
-      function pauseModels() { allModels.forEach(m => m.pause()); }
-      function resumeModels() { allModels.forEach(m => m.play()); }
-      function hideModels() { allModels.forEach(m => m.setAttribute("visible", "false")); }
-      function showModels() {
-        if(whaleDetected) whaleModels[0].setAttribute("visible","true");
-        if(octopusDetected) octopusModels[0].setAttribute("visible","true");
-      }
-
-      // --- Botones ---
-      document.querySelector("#btnStart").addEventListener("click", () => {
-        arSystem.start();   // inicia cámara + tracking
-        resumeModels();     // reanuda animaciones
-        showModels();       // muestra modelos
-      });
-
-      document.querySelector("#btnPause").addEventListener("click", () => {
-        arSystem.pause();   // pausa tracking
-        pauseModels();      // pausa animaciones
-      });
-
-      document.querySelector("#btnStop").addEventListener("click", () => {
-        arSystem.stop();    // detiene AR
-        hideModels();       // oculta modelos
-      });
+      document.querySelector("#btnStart").addEventListener("click",()=>arSystem.start());
+      document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
+      document.querySelector("#btnStop").addEventListener("click",()=>arSystem.stop());
     </script>
   </body>
 </html>
-
