@@ -63,6 +63,26 @@
         max-width: 150px;
         border-radius: 8px;
       }
+
+      /* Botones de control */
+      #controls {
+        position: fixed;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        display: flex;
+        gap: 10px;
+      }
+
+      #controls button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        background: #444;
+        color: white;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -79,6 +99,13 @@
         <button id="btnPrev">⬅️ Anterior</button>
         <button id="btnNext">➡️ Siguiente</button>
       </div>
+    </div>
+
+    <!-- Controles AR -->
+    <div id="controls">
+      <button id="btnStart">▶️ Start</button>
+      <button id="btnPause">⏸ Pause</button>
+      <button id="btnStop">⏹ Stop</button>
     </div>
 
     <!-- Escena AR -->
@@ -155,17 +182,18 @@
       function updateMenuVisibility() {
         if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
           menu.style.display = "block";
-          scanMessage.style.display = "none"; // oculta mensaje al detectar uno
+          scanMessage.style.display = "none";
         } else {
           menu.style.display = "none";
           if (!whaleDetected && !octopusDetected) {
-            scanMessage.style.display = "block"; // vuelve a mostrar mensaje si no hay ninguno
+            scanMessage.style.display = "block";
           }
         }
       }
 
       // Eventos detección ballena
       document.getElementById("target-whale").addEventListener("targetFound", () => {
+        console.log("Ballena detectada");
         whaleDetected = true;
         if (!octopusDetected) {
           currentAnimal = "whale";
@@ -175,12 +203,14 @@
         updateMenuVisibility();
       });
       document.getElementById("target-whale").addEventListener("targetLost", () => {
+        console.log("Ballena perdida");
         whaleDetected = false;
         updateMenuVisibility();
       });
 
       // Eventos detección pulpo
       document.getElementById("target-octopus").addEventListener("targetFound", () => {
+        console.log("Pulpo detectado");
         octopusDetected = true;
         if (!whaleDetected) {
           currentAnimal = "octopus";
@@ -190,6 +220,7 @@
         updateMenuVisibility();
       });
       document.getElementById("target-octopus").addEventListener("targetLost", () => {
+        console.log("Pulpo perdido");
         octopusDetected = false;
         updateMenuVisibility();
       });
@@ -201,7 +232,6 @@
           showFact();
         }
       });
-
       document.querySelector("#btnPrev").addEventListener("click", () => {
         if (currentAnimal) {
           factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
@@ -211,13 +241,42 @@
 
       // -------- NUEVO: Rotación de imágenes en el mensaje --------
       const scanImage = document.querySelector("#scan-image");
-      const scanImages = ["./Ballena3.png", "./OctupusO3.png"]; // tus 2 imágenes de target
+      const scanImages = ["./Ballena3.png", "./OctupusO3.png"];
       let scanIndex = 0;
-
       setInterval(() => {
         scanIndex = (scanIndex + 1) % scanImages.length;
         scanImage.src = scanImages[scanIndex];
-      }, 2000); // cambia cada 2 segundos
+      }, 2000);
+
+      // -------- NUEVO: Eventos A-FRAME globales --------
+      const sceneEl = document.querySelector("a-scene");
+      let arSystem;
+
+      sceneEl.addEventListener("loaded", () => {
+        arSystem = sceneEl.systems["mindar-image-system"];
+      });
+
+      sceneEl.addEventListener("arReady", () => {
+        console.log("AR está listo ✅");
+      });
+
+      sceneEl.addEventListener("arError", (err) => {
+        console.error("Error en AR ❌", err);
+      });
+
+      // Controles Start / Pause / Stop
+      document.querySelector("#btnStart").addEventListener("click", () => {
+        console.log("▶️ Iniciando AR");
+        arSystem.start();
+      });
+      document.querySelector("#btnPause").addEventListener("click", () => {
+        console.log("⏸ Pausando AR");
+        arSystem.pause();
+      });
+      document.querySelector("#btnStop").addEventListener("click", () => {
+        console.log("⏹ Deteniendo AR");
+        arSystem.stop();
+      });
     </script>
   </body>
 </html>
