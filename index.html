@@ -2,6 +2,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v7.0.0/dist/aframe-extras.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
     <style>
       #menu {
@@ -62,37 +63,13 @@
         max-width: 150px;
         border-radius: 8px;
       }
-
-      /* Botones de control AR */
-      #ar-controls {
-        position: fixed;
-        top: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 1000;
-      }
-
-      #ar-controls button {
-        margin: 3px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        border: none;
-        background: #32cd32;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      #ar-controls button:hover {
-        background: #228b22;
-      }
     </style>
   </head>
   <body>
     <!-- MENSAJE ESCANEAR -->
     <div id="scan-message">
       Apunta tu cámara hacia las imágenes para comenzar
-      <img id="scan-image" src="./Ballena3.png" alt="Target a escanear">
+      <img id="scan-image" src="./target1.png" alt="Target a escanear">
     </div>
 
     <!-- Menú flotante -->
@@ -102,13 +79,6 @@
         <button id="btnPrev">⬅️ Anterior</button>
         <button id="btnNext">➡️ Siguiente</button>
       </div>
-    </div>
-
-    <!-- Botones de control AR -->
-    <div id="ar-controls">
-      <button id="start-ar">Iniciar AR</button>
-      <button id="pause-ar">Pausar AR</button>
-      <button id="stop-ar">Detener AR</button>
     </div>
 
     <!-- Escena AR -->
@@ -157,9 +127,6 @@
       const factBox = document.querySelector("#fact-box");
       const menu = document.querySelector("#menu");
       const scanMessage = document.querySelector("#scan-message");
-      const scanImage = document.querySelector("#scan-image");
-      const scanImages = ["./Ballena3.png", "./OctupusO3.png"];
-      let scanIndex = 0;
 
       const facts = {
         whale: [
@@ -179,30 +146,32 @@
       let whaleDetected = false;
       let octopusDetected = false;
 
-      // Rotación de imágenes en el mensaje
-      setInterval(() => {
-        scanIndex = (scanIndex + 1) % scanImages.length;
-        scanImage.src = scanImages[scanIndex];
-      }, 2000);
-
       function showFact() {
-        if (currentAnimal) factBox.innerText = facts[currentAnimal][factIndex];
+        if (currentAnimal) {
+          factBox.innerText = facts[currentAnimal][factIndex];
+        }
       }
 
       function updateMenuVisibility() {
         if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
           menu.style.display = "block";
-          scanMessage.style.display = "none";
+          scanMessage.style.display = "none"; // oculta mensaje al detectar uno
         } else {
           menu.style.display = "none";
-          if (!whaleDetected && !octopusDetected) scanMessage.style.display = "block";
+          if (!whaleDetected && !octopusDetected) {
+            scanMessage.style.display = "block"; // vuelve a mostrar mensaje si no hay ninguno
+          }
         }
       }
 
       // Eventos detección ballena
       document.getElementById("target-whale").addEventListener("targetFound", () => {
         whaleDetected = true;
-        if (!octopusDetected) { currentAnimal = "whale"; factIndex = 0; showFact(); }
+        if (!octopusDetected) {
+          currentAnimal = "whale";
+          factIndex = 0;
+          showFact();
+        }
         updateMenuVisibility();
       });
       document.getElementById("target-whale").addEventListener("targetLost", () => {
@@ -213,7 +182,11 @@
       // Eventos detección pulpo
       document.getElementById("target-octopus").addEventListener("targetFound", () => {
         octopusDetected = true;
-        if (!whaleDetected) { currentAnimal = "octopus"; factIndex = 0; showFact(); }
+        if (!whaleDetected) {
+          currentAnimal = "octopus";
+          factIndex = 0;
+          showFact();
+        }
         updateMenuVisibility();
       });
       document.getElementById("target-octopus").addEventListener("targetLost", () => {
@@ -223,15 +196,28 @@
 
       // Botones curiosidades
       document.querySelector("#btnNext").addEventListener("click", () => {
-        if (currentAnimal) { factIndex = (factIndex + 1) % facts[currentAnimal].length; showFact(); }
+        if (currentAnimal) {
+          factIndex = (factIndex + 1) % facts[currentAnimal].length;
+          showFact();
+        }
       });
+
       document.querySelector("#btnPrev").addEventListener("click", () => {
-        if (currentAnimal) { factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length; showFact(); }
+        if (currentAnimal) {
+          factIndex = (factIndex - 1 + facts[currentAnimal].length) % facts[currentAnimal].length;
+          showFact();
+        }
       });
 
-      // ---------- INTEGRACIÓN DE EVENTOS AR ----------
-      const sceneEl = document.querySelector('a-scene');
-      let arSystem;
-      sceneEl.addEventListener
+      // -------- NUEVO: Rotación de imágenes en el mensaje --------
+      const scanImage = document.querySelector("#scan-image");
+      const scanImages = ["./Ballena3.png", "./OctupusO3.png"]; // tus 2 imágenes de target
+      let scanIndex = 0;
 
-
+      setInterval(() => {
+        scanIndex = (scanIndex + 1) % scanImages.length;
+        scanImage.src = scanImages[scanIndex];
+      }, 2000); // cambia cada 2 segundos
+    </script>
+  </body>
+</html>
