@@ -66,13 +66,13 @@
     <div id="menu">
       <div id="fact-box">Selecciona un animal para ver curiosidades</div>
       <div>
-        <button id="btnPrev">⬅️ Anterior</button>
-        <button id="btnNext">➡️ Siguiente</button>
+        <button id="btnPrev">⬅ Anterior</button>
+        <button id="btnNext">➡ Siguiente</button>
       </div>
     </div>
 
     <div id="controls">
-      <button id="btnStart">▶️ Start</button>
+      <button id="btnStart">▶ Start</button>
       <button id="btnPause">⏸ Pause</button>
       <button id="btnStop">⏹ Stop</button>
     </div>
@@ -145,14 +145,16 @@
 
       const facts = {
         whale: [
-          "Las ballenas azules son los animales más grandes que han existido.",
+          "La ballena azul puede medir hasta 30 metros de largo y pesar más de 150 toneladas.",
           "Su corazón puede pesar lo mismo que un coche pequeño.",
-          "Se comunican con cantos que viajan grandes distancias bajo el agua."
+          "Solo su lengua puede pesar lo mismo que un elefante adulto (unas 4 toneladas).",
+          "En una sola bocanada pueden tragar hasta 4 toneladas de agua con presas"
         ],
         octopus: [
           "Los pulpos tienen tres corazones y sangre azul.",
-          "Pueden cambiar de color y textura para camuflarse.",
-          "Son considerados de los invertebrados más inteligentes."
+           "Pueden exprimir su cuerpo para pasar por huecos del tamaño de una moneda",
+          "Pueden cambiar de color y textura para camuflarse en menos de un segundo.",
+          "Dos tercios de sus neuronas están en los brazos."
         ]
       };
 
@@ -215,8 +217,8 @@
 
       const sceneEl=document.querySelector("a-scene"); let arSystem;
       sceneEl.addEventListener("loaded",()=>{arSystem=sceneEl.systems["mindar-image-system"];});
-      sceneEl.addEventListener("arReady",()=>console.log("AR listo ✅"));
-      sceneEl.addEventListener("arError",(err)=>console.error("Error AR ❌",err));
+      sceneEl.addEventListener("arReady",()=>console.log("AR listo"));
+      sceneEl.addEventListener("arError",(err)=>console.error("Error AR",err));
 
       document.querySelector("#btnStart").addEventListener("click",()=>arSystem.start());
       document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
@@ -224,3 +226,4 @@
     </script>
   </body>
 </html>
+
