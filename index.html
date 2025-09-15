@@ -201,6 +201,12 @@
       let whaleDetected = false;
       let octopusDetected = false;
 
+      // Escalas predefinidas
+      const modelScales = {
+        whale: "0.7 0.7 0.7",
+        octopus: "0.05 0.05 0.05"
+      };
+
       function showFact() {
         if (currentAnimal) {
           factBox.innerText = facts[currentAnimal][factIndex];
@@ -235,13 +241,21 @@
         }
       }
 
-      // Cambios de modelo
+      // Cambios de modelo con recarga forzada
       window.changeWhale = (src) => {
-        whaleModel.setAttribute("gltf-model", src);
+        whaleModel.removeAttribute("gltf-model");
+        setTimeout(() => {
+          whaleModel.setAttribute("gltf-model", src);
+          whaleModel.setAttribute("scale", modelScales.whale);
+        }, 50);
       };
 
       window.changeOctopus = (src) => {
-        octopusModel.setAttribute("gltf-model", src);
+        octopusModel.removeAttribute("gltf-model");
+        setTimeout(() => {
+          octopusModel.setAttribute("gltf-model", src);
+          octopusModel.setAttribute("scale", modelScales.octopus);
+        }, 50);
       };
 
       // Eventos detección ballena
@@ -333,9 +347,3 @@
     </script>
   </body>
 </html>
-
-
-
-
-
-
