@@ -83,6 +83,26 @@
         color: white;
         cursor: pointer;
       }
+
+      /* Botones de cambio de modelo */
+      #model-switch {
+        position: fixed;
+        bottom: 200px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1001;
+        display: none;
+        gap: 10px;
+      }
+
+      #model-switch button {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 8px;
+        background: #28a745;
+        color: white;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
@@ -108,6 +128,9 @@
       <button id="btnStop">⏹ Stop</button>
     </div>
 
+    <!-- Controles de cambio de modelo -->
+    <div id="model-switch"></div>
+
     <!-- Escena AR -->
     <a-scene
       mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 2"
@@ -117,8 +140,13 @@
       device-orientation-permission-ui="enabled: false"
     >
       <a-assets>
-        <a-asset-item id="WhaleModel" src="./WhaleO1.glb"></a-asset-item>
-        <a-asset-item id="OctopusModel" src="./Octopus.glb"></a-asset-item>
+        <!-- Modelos de Ballena -->
+        <a-asset-item id="WhaleModel1" src="./WhaleO1.glb"></a-asset-item>
+        <a-asset-item id="WhaleModel2" src="./WhaleO2.glb"></a-asset-item>
+
+        <!-- Modelos de Pulpo -->
+        <a-asset-item id="OctopusModel1" src="./Octopus.glb"></a-asset-item>
+        <a-asset-item id="OctopusModel2" src="./Octopus2.glb"></a-asset-item>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -127,12 +155,10 @@
       <a-entity id="target-whale" mindar-image-target="targetIndex: 0">
         <a-gltf-model
           id="whale-model"
-          src="#WhaleModel"
+          src="#WhaleModel1"
           position="0 0 0"
           scale="0.7 0.7 0.7"
           rotation="0 0 0"
-          animation__updown="property: position; to: 0 0.3 0; dur: 2000; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 6000; loop: true; easing: linear"
         ></a-gltf-model>
       </a-entity>
 
@@ -140,12 +166,10 @@
       <a-entity id="target-octopus" mindar-image-target="targetIndex: 1">
         <a-gltf-model
           id="octopus-model"
-          src="#OctopusModel"
+          src="#OctopusModel1"
           position="0 -0.25 0"
           scale="0.05 0.05 0.05"
           rotation="0 0 0"
-          animation__updown="property: position; to: 0 0.2 0; dur: 2500; easing: easeInOutSine; loop: true; dir: alternate"
-          animation__spin="property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear"
         ></a-gltf-model>
       </a-entity>
     </a-scene>
@@ -154,6 +178,10 @@
       const factBox = document.querySelector("#fact-box");
       const menu = document.querySelector("#menu");
       const scanMessage = document.querySelector("#scan-message");
+      const modelSwitch = document.querySelector("#model-switch");
+
+      const whaleModel = document.querySelector("#whale-model");
+      const octopusModel = document.querySelector("#octopus-model");
 
       const facts = {
         whale: [
@@ -183,13 +211,38 @@
         if ((whaleDetected && !octopusDetected) || (!whaleDetected && octopusDetected)) {
           menu.style.display = "block";
           scanMessage.style.display = "none";
+
+          // Mostrar botones según target
+          if (whaleDetected) {
+            modelSwitch.innerHTML = `
+              <button onclick="changeWhale('#WhaleModel1')">Ballena 1</button>
+              <button onclick="changeWhale('#WhaleModel2')">Ballena 2</button>
+            `;
+            modelSwitch.style.display = "flex";
+          } else if (octopusDetected) {
+            modelSwitch.innerHTML = `
+              <button onclick="changeOctopus('#OctopusModel1')">Pulpo 1</button>
+              <button onclick="changeOctopus('#OctopusModel2')">Pulpo 2</button>
+            `;
+            modelSwitch.style.display = "flex";
+          }
         } else {
           menu.style.display = "none";
+          modelSwitch.style.display = "none";
           if (!whaleDetected && !octopusDetected) {
             scanMessage.style.display = "block";
           }
         }
       }
+
+      // Cambios de modelo
+      window.changeWhale = (src) => {
+        whaleModel.setAttribute("gltf-model", src);
+      };
+
+      window.changeOctopus = (src) => {
+        octopusModel.setAttribute("gltf-model", src);
+      };
 
       // Eventos detección ballena
       document.getElementById("target-whale").addEventListener("targetFound", () => {
@@ -239,7 +292,7 @@
         }
       });
 
-      // -------- NUEVO: Rotación de imágenes en el mensaje --------
+      // Rotación de imágenes en el mensaje
       const scanImage = document.querySelector("#scan-image");
       const scanImages = ["./Ballena3.png", "./OctupusO3.png"];
       let scanIndex = 0;
@@ -248,7 +301,7 @@
         scanImage.src = scanImages[scanIndex];
       }, 2000);
 
-      // -------- NUEVO: Eventos A-FRAME globales --------
+      // Eventos A-FRAME globales
       const sceneEl = document.querySelector("a-scene");
       let arSystem;
 
@@ -280,7 +333,6 @@
     </script>
   </body>
 </html>
-
 
 
 
