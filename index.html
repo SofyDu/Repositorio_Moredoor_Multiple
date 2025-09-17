@@ -222,10 +222,22 @@
 
       document.querySelector("#btnStart").addEventListener("click",()=>arSystem.start());
       document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
-      document.querySelector("#btnStop").addEventListener("click",()=>arSystem.stop());
+     document.querySelector("#btnStop").addEventListener("click", () => {
+  arSystem.stop();
+       
+  whaleDetected = false;
+  octopusDetected = false;
+  currentAnimal = null;
+  factIndex = 0;
+  menu.style.display = "none";
+  modelSwitch.style.display = "none";
+  scanMessage.style.display = "block";
+});
+
     </script>
   </body>
 </html>
+
 
 
 
