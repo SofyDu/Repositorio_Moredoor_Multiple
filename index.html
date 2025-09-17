@@ -224,25 +224,16 @@
       document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
      document.querySelector("#btnStop").addEventListener("click", () => {
   arSystem.stop();
-
-
   whaleDetected = false;
   octopusDetected = false;
   currentAnimal = null;
   factIndex = 0;
 
-
-  whaleModels.forEach(m => m.setAttribute("visible", false));
-  octopusModels.forEach(m => m.setAttribute("visible", false));
-
-  
-  document.querySelector("#target-whale").setAttribute("visible", false);
-  document.querySelector("#target-octopus").setAttribute("visible", false);
-
   menu.style.display = "none";
   modelSwitch.style.display = "none";
   scanMessage.style.display = "block";
 });
+
 
 
     </script>
