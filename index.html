@@ -223,7 +223,9 @@
       document.querySelector("#btnStart").addEventListener("click",()=>arSystem.start());
       document.querySelector("#btnPause").addEventListener("click",()=>arSystem.pause());
      document.querySelector("#btnStop").addEventListener("click", () => {
+       
   arSystem.stop();
+       
   whaleDetected = false;
   octopusDetected = false;
   currentAnimal = null;
@@ -234,9 +236,7 @@
   scanMessage.style.display = "block";
 });
 
-
-
-    </script>
+  </script>
   </body>
 </html>
 
